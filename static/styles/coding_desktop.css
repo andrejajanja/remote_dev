@@ -1,0 +1,226 @@
+*, html {
+    margin:0;
+    padding:0;  
+}/**/
+
+body{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;    
+    position: relative;
+}
+
+:root {
+    --glavni_delovi-sirina: 98%;
+}
+
+
+#cela_funkcionalna_povrs{
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+}
+
+#kodiranje{
+    width:80%;
+    height: 100%;
+}
+
+#zaglavlje{
+    background-color: rgb(171, 248, 194);
+    background-clip: border-box;
+    font-family: 'Courier New', Courier, monospace;
+    padding-left: 1%;
+    display: flex;
+    flex-direction: row;
+    width: 99%;
+    height: 7%;
+}
+
+#logo_div{
+    display:table;
+    padding-right: 20%;            
+}
+
+#logo{        
+    text-align: left;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#odjava{
+    font-family: 'Courier New', Courier, monospace;
+    width: 13%;
+    font-size: 150%;
+    background-color: transparent;
+    border-width: 1px;
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-left: auto;
+    cursor: pointer;
+}
+#deo_povrsina_kodiranje{
+    margin-left:1%;
+    margin-top:1%;
+    width: var(--glavni_delovi-sirina);
+    height: 50%;
+    display:flex;
+    flex-direction: row;
+}
+#povrsina_kodiranje{
+    height: 100%;
+    width: 100%;
+    display:block;
+    align-content: flex-end;
+    resize: none;
+    border-color: rgb(12, 82, 29);   
+    border-width: 2px;
+    background: #6d6d6d;
+    font-size: 120%;
+    color: white;
+    padding-top: 0.25%;      
+}
+
+#prog_kontrole{        
+    width: 96%;
+    margin-left: 1%;
+    height: 5%;
+    display: block;
+    margin-top: 0.25%;
+    margin-bottom: 0.25%;
+}
+.control_dugme{
+    width: 20%;        
+    font-size: 1.1em;
+    margin-right: 10%;
+    height: 100%;     
+    border-radius: 10px;        
+    font-family: 'Courier New', Courier, monospace;
+    cursor: pointer;
+}
+#ocisti_konzolu{
+    font-size: 1.1em;
+}
+
+::placeholder{
+    color:white;
+    font-size: 100%;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#naslov_konzola{        
+    font-family: 'Courier New', Courier, monospace;
+    margin-left: 1%;
+    height: 3%;
+    font-size: 1.2em;    
+    width: var(--glavni_delovi-sirina);
+    background-color:rgb(171, 248, 194);
+}
+#koznola_deo{
+    margin-left:1%;    
+    width: var(--glavni_delovi-sirina);
+    background-color: #6d6d6d;
+    height: 40%;
+    font-size: 120%;
+    color: white;
+    resize: none;
+}
+
+
+#footer_deo{
+    background-color: rgb(171, 248, 194);                               
+    width: 100%;
+    height: 7%;
+    margin-top: 1%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+}
+#footer_text{
+    width: 40%;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: large;
+    text-align: center;
+}
+
+#file_explorer_deo{
+    height: 100%;
+    width: 20%;
+}
+
+#forma_pravljenje_fajlovi{    
+    top: 0;
+    background-color: white;
+    width: 98%;
+    height: 25%;
+    display: flex;
+    flex-direction: column;
+}
+
+#file_kreator{        
+    width: 96%;
+    height: 70%;
+    margin: 2%;        
+    display: flex;
+    flex-direction: column;
+    border:rgb(171, 248, 194) solid 5px;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    font-family: 'Courier New', Courier, monospace;
+}
+#file_ime_input{
+    font-size:200%;        
+    font-family: inherit;
+    width: 95%;
+    align-self: center;
+    height: 100%;
+    float: left;
+    border: black solid 3px;
+}
+
+.file_exp_dugmad{
+    margin-top: 1%;
+    font-family: inherit;
+    width: 95%;
+    align-self: center;
+    height: 100%;
+    float: right;
+    font-size: 150%;
+    background-color: rgb(171, 248, 194);
+}
+
+#adresna_traka{
+    width: 95%;        
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 2%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    padding-left: 1%;
+    border: 5px solid rgb(171, 248, 194);
+    font-size: 2vh;
+}
+
+#file_explorer{
+    height: 75%;
+    overflow-y: auto;
+}
+
+#files_view{
+    display: flex;
+    flex-direction: column;
+    width: 96%;        
+    margin:2%;
+    height: 100%;    
+    box-sizing: border-box;
+}
+.file_folder{
+    width: 60%;
+    margin-top: 1%;
+    height: 5%;
+    font-size:80%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
