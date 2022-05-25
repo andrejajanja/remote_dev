@@ -7,6 +7,19 @@ from ua_parser import user_agent_parser
 from infi.systray import SysTrayIcon
 from lib import *
 
+#region tray ikonica
+
+def say_hello(systray):
+    os._exit(1)
+
+def ugasi_program(systray):
+    os._exit(1)
+
+opcije = (("Gasi ga i na dvoklik na tray ikonicu", None, say_hello),)
+trag = SysTrayIcon("static/images/ikonica.ico", "Remote_dev", opcije, on_quit=ugasi_program)
+
+#endregion tray ikonica
+
 #region serverske promenljive
 app = Flask(__name__)
 serverski_path = r"E:\remote_dev_server_data"
@@ -20,15 +33,6 @@ sesije = {}
 #endregion serverske promenljive
 
 jeste_debug = False
-
-def say_hello(systray):
-    os._exit(1)
-
-def ugasi_program(systray):
-    os._exit(1)
-
-opcije = (("Gasi ga i na dvoklik na tray ikonicu", None, say_hello),)
-trag = SysTrayIcon("static/images/ikonica.ico", "Remote_dev", opcije, on_quit=ugasi_program)
 
 #region stranice
 @app.route('/', methods=['GET', 'POST'])
