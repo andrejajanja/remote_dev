@@ -1,0 +1,46 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>File_menadzer</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/file_manager.css') }}" />
+        <link rel = "apple-touch-icon" sizes = "180x180" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">
+        <link rel = "icon" type = "image/png" sizes = "32x32" href = "{{ url_for('static',filename='images/ikonica_32x32.png') }}">
+        <link rel = "icon" type = "image/png" sizes = "16x16" href = "{{ url_for('static',filename='images/ikonica_16x16.png') }}">
+        <link rel = "mask-icon" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">
+        <link rel = "shortcut icon" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">
+    </head>
+
+    <body>
+        <form id = "glavna_forma">
+
+            <div id="zaglavlje">
+
+                <div id="logo_div">
+                    <h1 id="logo">Pretrazivac fajlova</h1>
+                </div>
+
+                <input class="zaglavlje_dugme" type="submit" name="akcija" data-vrednost="nazad" value="nazad"/>
+            </div>               
+
+            <div id="file_info">
+                <div id = "file_kreator">
+                    <div id = "kreiranje">
+                        <input placeholder="Ime fajla ovde" type="text" id = "file_ime_input" name = "ime">
+                        <input type="submit" id ="kreiraj_file" name = "akcija" data-vrednost="napravi" value="Napravi file/folder">
+                    </div>
+                    <input type="submit" id ="obrisi_file" name = "akcija" data-vrednost="obrisi" value="Obrisi file/folder">
+                </div>
+
+                <div id = "adresna_traka"></div>
+            </div>
+        </form>
+
+        <form id="file_explorer">
+            <div id="files_view"></div> 
+        </form> 
+        <div id="footer_deo">
+            <div id="footer_text">Andreja Janković, andrejajanja@gmail.com, April 2022.</div>
+        </div>
+    </body>
+    <script type="text/javascript" src="{{url_for('static', filename='js/file_manager.js')}}"></script>
+</html>

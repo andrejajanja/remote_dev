@@ -1,0 +1,33 @@
+<html lang="en">
+    <head>
+        <title>404 - ERROR</title>
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='styles/404.css') }}"/>
+        <link rel = "apple-touch-icon" sizes = "180x180" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">
+        <link rel = "icon" type = "image/png" sizes = "32x32" href = "{{ url_for('static',filename='images/ikonica_32x32.png') }}">
+        <link rel = "icon" type = "image/png" sizes = "16x16" href = "{{ url_for('static',filename='images/ikonica_16x16.png') }}">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <style>
+           body{
+                margin: 0;
+                background-color: rgb(171, 248, 194);
+            }
+
+            .elem{
+                padding-top: 10%;
+                height: 70%;
+                text-align: left;
+                font-size: 300%;    
+                padding-right: 5%;
+                padding-left: 5%;
+                font-family: Courier,Georgia,Times,Times New Roman,serif; 
+            } 
+        </style>
+    </head>
+    <body>
+        <div class="elem">
+            <p><u>GRESKA/ERROR 404:</u><br><br>STRANICA NIJE NADJENA, verovatno niste lepo ukucali URL<br><br>PAGE NOT FOUND, You probably mistyped the URL</p> 
+        </div>
+    </body>
+</html>

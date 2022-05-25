@@ -1,0 +1,58 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />        
+        <title>Remote_dev</title>
+        
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='styles/coding_desktop.css') }}"/>
+        <link rel = "apple-touch-icon" sizes = "180x180" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">
+        <link rel = "icon" type = "image/png" sizes = "32x32" href = "{{ url_for('static',filename='images/ikonica_32x32.png') }}">
+        <link rel = "icon" type = "image/png" sizes = "16x16" href = "{{ url_for('static',filename='images/ikonica_16x16.png') }}">
+        <link rel = "mask-icon" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">
+        <link rel = "shortcut icon" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">    
+    </head>
+    <body> 
+        <form id="zaglavlje">
+            <div id="logo_div">
+                <h1 id="logo">Janja remote dev</h1>
+            </div>
+            <input id = "odjava" type="submit" name="kontrola" data-funkcija = "odjava" value="odjava"/>        
+        </form>
+
+        <div id="cela_funkcionalna_povrs">
+            <div id = "kodiranje">
+                <form id="forma_kodiranje">                        
+                    <div id="deo_povrsina_kodiranje">                        
+                        <textarea id="povrsina_kodiranje" wrap="off" name="code" placeholder="Prazno.">{{kdp}}</textarea>
+                    </div>
+                    <div id="prog_kontrole">
+                        <input class = "control_dugme" id ="izvr" type="submit" data-funkcija="Izvrsi" name="kontrola" value="Izvrši"/>                
+                        <input class = "control_dugme" id="sacu" type="submit" data-funkcija="Sacuvaj" name="kontrola" value="Sačuvaj"/>
+                        <input class = "control_dugme" id="ocisti_konzolu" type="submit" data-funkcija="ocisti" name="kontrola" value="Očisti konzolu"/>
+                    </div>
+                    <p id = "naslov_konzola">Konzola:</p>            
+                    <textarea id="koznola_deo" wrap="off" name ="kontrola"></textarea>
+                </form>
+            </div>
+
+            <div id="file_explorer_deo">
+                <form id = "forma_pravljenje_fajlovi">
+                    <div id = "file_kreator">                        
+                        <input placeholder="Ime fajla ovde" type="text" id = "file_ime_input" name = "ime">
+                        <input type="submit" class="file_exp_dugmad" name = "akcija" data-vrednost="napravi" value="Napravi file/folder">                        
+                        <input type="submit" class="file_exp_dugmad" name = "akcija" data-vrednost="obrisi" value="Obrisi file/folder">
+                    </div>
+                    <div id = "adresna_traka"></div>
+                </form>
+        
+                <form id="file_explorer">
+                    <div id="files_view"></div> 
+                </form>
+            </div>
+        </div>
+
+        <div id="footer_deo">
+            <div id="footer_text">Andreja Janković, andrejajanja@gmail.com, April 2022.</div>
+        </div>
+    </body>
+    <script type="text/javascript" src="{{url_for('static', filename='js/coding_desktop.js')}}"></script>
+</html>

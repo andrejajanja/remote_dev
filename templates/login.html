@@ -1,0 +1,43 @@
+<html lang="en">
+    <head>        
+        <meta charset="UTF-8" />        
+        <title>Remote_dev</title>
+        <script src="https://unpkg.com/pure-md5@latest/lib/index.js"></script>
+        <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='styles/login.css') }}"/>
+        <link rel = "apple-touch-icon" sizes = "180x180" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">
+        <link rel = "icon" type = "image/png" sizes = "32x32" href = "{{ url_for('static',filename='images/ikonica_32x32.png') }}">
+        <link rel = "icon" type = "image/png" sizes = "16x16" href = "{{ url_for('static',filename='images/ikonica_16x16.png') }}">
+        <link rel = "mask-icon" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">
+        <link rel = "shortcut icon" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">
+    </head>    
+
+    <body>        
+        <form id="glavna">
+            <div id="zaglavlje">
+
+                <div id="logo_div">
+                    <h1 id="logo">Prijavljivanje</h1>
+                </div>                
+            </div>    
+            <p id = "poruka"></p>
+            <div id="logovanje">
+                <div class = "unos_polje">
+                    <p class ="para">Korisničko ime:</p>
+                    <input name="ime_korisnika" class = "polja_za_unosenje" placeholder = "Korisnicko ime" required oninvalid="this.setCustomValidity('Molimo unesite Vaše korisničko ime ovde')" oninput="this.setCustomValidity('')"/>                    
+                </div>
+                
+                <div class = "unos_polje">
+                    <p class ="para">Šifra:</p>
+                    <input type="password" name="prolazana_rec" class = "polja_za_unosenje" placeholder = "Šifra" required oninvalid="this.setCustomValidity('Molimo unesite Vašu šifru ovde')" oninput="this.setCustomValidity('')"/>
+                    
+                </div>
+                
+                <input name = "izvrsi" id= "login_dugme" type="submit" data-funkcija="Login" value = "Prijavi se">                
+            </div>
+            <div id="footer_deo">
+                <div id="footer_text">Andreja Janković, andrejajanja@gmail.com, April 2022.</div>
+            </div>
+        </form>
+    </body>
+    <script type="text/javascript" src="{{url_for('static', filename='js/login.js')}}"></script>
+</html>
