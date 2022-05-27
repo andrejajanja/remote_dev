@@ -1,5 +1,3 @@
-
-
 class korisnik:
     def __init__(self) -> None:
         self.proces = ""
@@ -7,7 +5,4 @@ class korisnik:
         self.kod_povrsina = ""
         self.konzola = ""
         self.fajlovi = ""
-        
     
-class korisnici:
-    pass
