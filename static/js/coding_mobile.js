@@ -41,7 +41,7 @@ glavna_forma_form.addEventListener("submit", async function(e){
     e.preventDefault()                       
     if(e.submitter.dataset.funkcija == "odjava"){                                             
         odgovor = await posalji_req_json({izloguj: "pokreni"}, "POST")
-        window.location.href = "http://janja.xyz"
+        window.location.href = "https://janja.xyz/"
     }
 
     if(e.submitter.dataset.funkcija == "Izvrsi"){
@@ -92,7 +92,7 @@ glavna_forma_form.addEventListener("submit", async function(e){
     
 
     if(e.submitter.dataset.funkcija == "fajlovi"){                
-        window.location.href = "http://janja.xyz/file_explorer"
+        window.location.href = "https://janja.xyz/file_explorer"
 
     }
 

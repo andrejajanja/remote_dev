@@ -1,4 +1,99 @@
-import csv,hashlib,os,random,string
+import sqlite3,os,random,string
+
+class korisnik:
+    def __init__(self, nalog: list):        
+        self.proces = ""
+        self.index_trenutnog = 0
+        self.kod_povrsina = ""
+        self.konzola = ""
+        self.trenutni_file = nalog[3]
+        self.select_color = nalog[4] #boja kojom se boje selektovani fajlovi/folderi
+        self.root_fold = nalog[3]
+
+        fajlovi = [["white", x, f"root_fold/{x}", 1] for x in os.listdir(nalog[3])]
+        fajlovi = [[nalog[4], "root", "root_fold", 0],*fajlovi]
+        self.fajlovi = fajlovi
+
+
+#region nalog funkcije
+def obrisi_sve_iz_trenutni_ulogovani():
+    konekcija = sqlite3.connect(r"E:\remote_dev_server_data\baza.mdf")
+    kursor = konekcija.cursor() 
+    kursor.execute('''
+        DELETE FROM trenutni_ulogovani;
+    ''')
+
+    konekcija.commit()
+    konekcija.close()
+
+def sql_select_u_listu(query):
+    konekcija = sqlite3.connect(r"E:\remote_dev_server_data\baza.mdf")
+    kursor = konekcija.cursor()    
+    kursor.execute(query)
+    pom = []
+    for x in kursor.fetchall():
+        pom.append(list(x))
+
+    konekcija.close()
+    if pom == []:
+        return False
+    else:
+        return pom
+
+def da_li_je_vec_ulogovan(username,password):
+    konekcija = sqlite3.connect(r"E:\remote_dev_server_data\baza.mdf")
+    kursor = konekcija.cursor()    
+
+    kursor.execute('''
+        select id_korisnika
+        from trenutni_ulogovani
+        where ime = ? and pass = ?;
+    ''', (username,password))
+    pom = []
+    for x in kursor.fetchall():
+        pom.append(list(x))    
+    konekcija.close()
+    if pom == []:
+        return False
+    else:
+        return True
+
+def pokusaj_login(username, password):
+    '''
+    @todo #2 sql kod da vraca true ili false automatski
+    '''
+    konekcija = sqlite3.connect(r"E:\remote_dev_server_data\baza.mdf")
+    kursor = konekcija.cursor() 
+    kursor.execute('''
+        select *
+        from Korisnici
+        where ime = ? and pass = ?;
+    ''', (username,password))
+    nalog = list(kursor.fetchall())
+    konekcija.close()
+    if nalog == []:
+        return False
+    else:
+        return nalog[0]
+
+def ulogovani_tabela(idkorisnika, ime, passw):
+    konekcija = sqlite3.connect(r"E:\remote_dev_server_data\baza.mdf")
+    kursor = konekcija.cursor() 
+    kursor.execute('''
+        INSERT INTO trenutni_ulogovani
+        VALUES (?,?,?);
+    ''', (idkorisnika, ime, passw))
+    konekcija.commit()    
+    konekcija.close()
+
+def izloguj_korisnika(idkorisnika):
+    konekcija = sqlite3.connect(r"E:\remote_dev_server_data\baza.mdf")
+    kursor = konekcija.cursor() 
+    kursor.execute("DELETE FROM trenutni_ulogovani where id_korisnika = ?;", (idkorisnika))
+    konekcija.commit()    
+    konekcija.close()
+
+#endregion nalog funkcije
 
 #region FILE SYSTEM FUNKCIJE
 def napravi_fajl(path):
@@ -34,53 +129,7 @@ def vrati_element_po_adresi(lista, adresa_elementa):
         if elem[2] == adresa_elementa:            
             return i
 
-
 #endregion FILE SYSTEM FUNKCIJE
-
-#region FUNKCIJE ZA RAD SA NALOZIMA i sesijama
-
-def ucitaj_sesiju(userpass: list):
-    global hash_user, svi_sesijski_podaci
-    ses = {}    
-    pom = svi_sesijski_podaci[hash_user.index(userpass[0])]
-
-    fajlovi = [["white", x, f"root_fold/{x}", 1] for x in os.listdir(pom[0])]
-    fajlovi = [[pom[1], "root", "root_fold", 0],*fajlovi]
-    ses["fajlovi"] = fajlovi
-    ses["root_fold"] = pom[0]
-    ses["select_color"] = pom[1]
-    ses["konzola"] = ""
-    ses["kod_povrsina"] = ""
-    ses["trenutni_file"] = pom[0]
-    ses["index_trenutnog"] = 0
-    ses["proces"] = ""
-    return ses
-
-def ucitaj_hash_user_pass(path_do_csv):
-    hash_user,hash_pass =[],[]
-    with open(path_do_csv, "r+") as file:
-                citac = csv.reader(file)
-                zaglavlje = next(citac)
-                for red in citac:
-                    hash_user.append(red[0]) 
-                    hash_pass.append(red[1])
-    return hash_user,hash_pass
-
-def ucitaj_sve_sesijske_podatke(path_do_csv):
-    podaci = []
-    with open(path_do_csv, "r+") as file:
-        citac = csv.reader(file)
-        zaglavlje = next(citac)
-        for red in citac:
-            podaci.append(red)            
-    return podaci
-#endregion FUNKCIJE ZA RAD SA NALOZIMA i sesijama
-
-#region korisne male funkcije
-def encrypt(plaintext: str):
-    return hashlib.md5(plaintext.encode()).hexdigest()
 
 def nasumicni_string(x: int):    
     return "".join(random.choice(string.ascii_letters) for i in range(x))
-
-#endregion korisne male funkcije

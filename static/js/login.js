@@ -27,9 +27,9 @@ glavna_forma_form.addEventListener("submit", async function(e){
     e.preventDefault();
     if(e.submitter.dataset.funkcija == "Login")
     {                         
-        let hash_user = enkriptuj(glavna_forma_form.ime_korisnika.value)  
-        let hash_pass = enkriptuj(glavna_forma_form.prolazana_rec.value)                  
-        let data = {login: "probaj" ,username: hash_user, password:hash_pass};
+        let korisnicko_ime = glavna_forma_form.ime_korisnika.value
+        let password_hash = enkriptuj(glavna_forma_form.prolazana_rec.value)                  
+        let data = {login: "probaj" ,username: korisnicko_ime, password:password_hash};
         const respo = await posalji_req_json(data, "POST");
         if(respo.autentifikacija == "neuspesna")
         {
