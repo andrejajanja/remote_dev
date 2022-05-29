@@ -4,6 +4,10 @@ ime = input("Unesite korisnicko ime: ")
 password = input("Unesite korisnicko ime: ")
 
 passw = hashlib.md5(password.encode()).hexdigest()
+
+#print(passw)
+#exit()
+
 fold = r'E:\remote_dev_server_data\korisnicki_folderi'
 
 fold = os.path.join(fold, "".join(random.choice(string.ascii_letters) for i in range(15)))
