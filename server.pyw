@@ -109,6 +109,10 @@ def kodiranje():
                 return jsonify({"status": 0})
                                     
         if "izloguj" in komande:
+            '''
+            @todo #3 ne radi logout, jebe ga ovaj .pop i izbacivanje iz baze, redirect ne sljaka
+            '''
+
             #smanjuje se broj uredjaja na kojima je ulogovan korisnik
             ulogovani[request.cookies["kluc_sesija"]] -= 1
             print(ulogovani[request.cookies["kluc_sesija"]])
