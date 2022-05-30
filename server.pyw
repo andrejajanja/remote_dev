@@ -19,10 +19,12 @@ app = Flask(__name__)
 vreme_kolacic = 3600 #s traju kolacici na sajtu
 serverski_path = r"E:\remote_dev_server_data"
 lokacija_od_pythona = f"{os.path.dirname(sys.executable)}\{os.path.basename(sys.executable)}"
+app.config['MAX_CONTENT_LENGTH'] = 256000000
 #endregion serverske promenljive
 jeste_debug = False
-
-nalog = ["",'Andreja', '92bffb0826ab25ce7877d6d1bd4a42f4', r'C:\\Artificial_Inteligence\\uho', 'rgb(171, 248, 194)']
+rt = r"C:\python_projekti\remote_dev"
+#rt = r'C:\\Artificial_Inteligence\\uho'
+nalog = ["",'Andreja', '92bffb0826ab25ce7877d6d1bd4a42f4', rt, 'rgb(171, 248, 194)']
 kljuc_korisnika = ""
 
 user = korisnik(nalog)
@@ -127,13 +129,15 @@ def menadzer():
                                
     if "kluc_sesija" not in request.cookies.keys():
         return redirect("/")  
-    if request.cookies["kluc_sesija"] == kljuc_korisnika:                
+    if request.cookies["kluc_sesija"] != kljuc_korisnika:                
         return redirect("/")  
 
     if request.method=="PUT":
 
-        for f in request.files.getlist("fajlovi"):
-            print(f.filename)                       
+        if "." in user.trenutni_file:
+            tren = user.trenutni_file[0:user.trenutni_file.index(r"/")]
+
+        for f in request.files.getlist("fajlovi"):                           
             f.save(os.path.join(serverski_path, f.filename))
         return jsonify({"REZULTAT": "REZ"}), 200
 

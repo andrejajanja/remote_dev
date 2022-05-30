@@ -44,7 +44,7 @@ function napravi_dugmad(elems){
         input.className="file_folder";
         kutija_za_dugmice.appendChild(input);            
     });
-    adres_traka.innerHTML = "Trenutni otvoreni file/folder:<br>"+elems["trenutni_fajl"]
+    adres_traka.textContent = elems["trenutni_fajl"]
 }
 
 const url_code = "https://janja.xyz/coding";

@@ -39,21 +39,19 @@ const adres_traka = document.querySelector("#adresna_traka")
 const glavna_forma_form = document.querySelector("#glavna_forma");
 const ime_fajla = document.querySelector("#file_ime_input");
 const kutija_za_dugmice = document.querySelector("#files_view")
-const file_loader = document.querySelector("#file_loader")
+const file_loader = document.getElementById("file_loader")
 
 glavna_forma_form.addEventListener("submit", async function(e){        
     e.preventDefault();
-
     if(e.submitter.dataset["vrednost"] == "napravi")
     {
         let ime_fajla = prompt("Unesite ime fajla/foldera ovde:");
         var odgovor = await posalji_req_json({akcija:"napravi", "ime": ime_fajla}, "POST")
         napravi_dugmad(odgovor)                 
     }
-
     if(e.submitter.dataset["vrednost"] == "obrisi")
-    {                       
-        if(adres_traka.innerHTML == "root_fold"){
+    {                               
+        if(adres_traka.innerHTML.slice(34) == "root_fold"){
             alert("Ne mozete obrisati glavni direktorijum")
         }
         else{
@@ -98,9 +96,13 @@ file_explorer_form.addEventListener('submit', async function(e){
 })
 
 file_loader.onchange = async function(e){   
-    alert("UPLOAD")
+    alert("Otpremanje fajlova otpočelo.")
     let slanje = new FormData();
-    slanje.append("fajlovi", file_loader.files);    
+
+    for (let i = 0; i < file_loader.files.length; i++) {        
+        slanje.append("fajlovi", file_loader.files[i]);        
+    }
+
     const podaci = await fetch(url_stranice, {
         method: "PUT",
         body: slanje,        
@@ -110,5 +112,5 @@ file_loader.onchange = async function(e){
     while (file_loader.length > 0) {
         file_loader.pop();
     } 
-    alert("poslato")    
+    alert("Završeno otpremanje fajlova")    
 }
