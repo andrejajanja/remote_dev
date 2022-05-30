@@ -214,6 +214,25 @@ forma_zaglavlje.addEventListener("submit", async function(e){
     e.preventDefault();                       
     if(e.submitter.dataset.funkcija == "odjava"){                                             
         odgovor = await posalji_req_json({izloguj: "pokreni"}, "POST", url_code)
-        window.location.href = "http://janja.xyz"
+        window.location.href = "https://janja.xyz"
     }
 })
+
+window.addEventListener('keydown', async function (event) {
+    if (event.shiftKey && event.code === 'KeyS') {
+        sacuvaj_dugme.disabled = true;
+        odgovor = await posalji_req_json({kontrola: "sacuvaj", code: code_povrs.value},"POST", url_code)
+
+        if(odgovor["status"]){                    
+            sacuvaj_dugme.value = "Uspesno"
+            
+        }
+        else{                    
+            sacuvaj_dugme.value = "Greska"
+        }
+        await sleep(2000);
+        sacuvaj_dugme.disabled = false;
+        sacuvaj_dugme.value = "Sačuvaj"
+        return;
+    }
+});

@@ -19,7 +19,7 @@ app = Flask(__name__)
 vreme_kolacic = 3600 #s traju kolacici na sajtu
 serverski_path = r"E:\remote_dev_server_data"
 lokacija_od_pythona = f"{os.path.dirname(sys.executable)}\{os.path.basename(sys.executable)}"
-app.config['MAX_CONTENT_LENGTH'] = 256000000
+app.config['MAX_CONTENT_LENGTH'] = 100000000
 #endregion serverske promenljive
 jeste_debug = False
 rt = r"C:\python_projekti\remote_dev"

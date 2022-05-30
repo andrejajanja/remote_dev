@@ -1,7 +1,7 @@
 import sqlite3,os,random,string
 
 class korisnik:
-    def __init__(self, nalog: list):        
+    def __init__(self, nalog: list[str]):        
         self.proces = ""
         self.index_trenutnog = 0
         self.kod_povrsina = ""
