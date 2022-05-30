@@ -7,6 +7,7 @@ async function posalji_req_json(data, tip){
     .then((pod) => {return pod;});
     return podaci;
 }
+
 const url_stranice = window.location.href;
 
 function napravi_dugmad(elems){
@@ -38,24 +39,16 @@ const adres_traka = document.querySelector("#adresna_traka")
 const glavna_forma_form = document.querySelector("#glavna_forma");
 const ime_fajla = document.querySelector("#file_ime_input");
 const kutija_za_dugmice = document.querySelector("#files_view")
-
+const file_loader = document.querySelector("#file_loader")
 
 glavna_forma_form.addEventListener("submit", async function(e){        
     e.preventDefault();
 
     if(e.submitter.dataset["vrednost"] == "napravi")
     {
-        if(ime_fajla.value=="")
-        {
-            alert("Ne mozete da napravite fajl/folder bez unetog imena")
-            
-        }
-        else
-        {
-            var odgovor = await posalji_req_json({akcija:"napravi", "ime": ime_fajla.value}, "POST")
-            napravi_dugmad(odgovor)
-            ime_fajla.value = ""
-        }                
+        let ime_fajla = prompt("Unesite ime fajla/foldera ovde:");
+        var odgovor = await posalji_req_json({akcija:"napravi", "ime": ime_fajla}, "POST")
+        napravi_dugmad(odgovor)                 
     }
 
     if(e.submitter.dataset["vrednost"] == "obrisi")
@@ -64,8 +57,8 @@ glavna_forma_form.addEventListener("submit", async function(e){
             alert("Ne mozete obrisati glavni direktorijum")
         }
         else{
-            let person = prompt("Da li sigurno zelite da obirsete izabran file/folder? (izbrisite _ da bi potvrdili)", "da_");
-            if (person == "da") {
+            let obris_file = prompt("Da li sigurno zelite da obirsete izabran file/folder? (izbrisite _ da bi potvrdili)", "_");
+            if (obris_file == "") {
                 var odgovor = await posalji_req_json({akcija:"obrisi"}, "POST")
                 napravi_dugmad(odgovor)
             }else{
@@ -75,9 +68,19 @@ glavna_forma_form.addEventListener("submit", async function(e){
         
     }
 
+    if(e.submitter.dataset["vrednost"] == "preuzmi")
+    {
+
+    }
+
+    if(e.submitter.dataset["vrednost"] == "posalji")
+    {
+        file_loader.click();        
+    }
+
     if(e.submitter.dataset["vrednost"] == "nazad")
     {                                           
-        window.location.href = "http://janja.xyz/coding";
+        window.location.href = "https://janja.xyz/coding";
     }
 })
 
@@ -93,3 +96,19 @@ file_explorer_form.addEventListener('submit', async function(e){
     }
 
 })
+
+file_loader.onchange = async function(e){   
+    alert("UPLOAD")
+    let slanje = new FormData();
+    slanje.append("fajlovi", file_loader.files);    
+    const podaci = await fetch(url_stranice, {
+        method: "PUT",
+        body: slanje,        
+    })
+    .then((response) => response.json())
+    .then((pod) => {return pod;});        
+    while (file_loader.length > 0) {
+        file_loader.pop();
+    } 
+    alert("poslato")    
+}

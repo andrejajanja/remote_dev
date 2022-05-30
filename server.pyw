@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, redirect,request, render_template,make_response
-import os,shutil,hashlib,random,string,csv,sys
+import os,shutil,sys
 from waitress import serve
 from paste.translogger import TransLogger  
 from subprocess import Popen
@@ -54,6 +54,9 @@ def login():
 def kodiranje(): 
     global kljuc_korisnika       
     if request.method=="POST":
+        '''
+        todo@ #6 dodati sigurnost da nasumicni post request (iz postmana npr) ne moze da ubaguje server
+        '''
         komande = list(request.form.keys())
         sadrzaj_komande = list(request.form.values())
         kljuc_korisnika = request.cookies["kluc_sesija"]
@@ -118,13 +121,25 @@ def kodiranje():
             
         return redirect("/")
             
-@app.route('/file_explorer', methods=["GET","POST"])
+@app.route('/file_explorer', methods=["GET","POST", "PUT"])
 def menadzer():
-    global kljuc_korisnika  
+    global kljuc_korisnika
+                               
+    if "kluc_sesija" not in request.cookies.keys():
+        return redirect("/")  
+    if request.cookies["kluc_sesija"] == kljuc_korisnika:                
+        return redirect("/")  
+
+    if request.method=="PUT":
+
+        for f in request.files.getlist("fajlovi"):
+            print(f.filename)                       
+            f.save(os.path.join(serverski_path, f.filename))
+        return jsonify({"REZULTAT": "REZ"}), 200
+
     if request.method=="POST":
         komande = request.form.keys()
-        sadrzaj_komande = list(request.form.values())  
-        kljuc_korisnika = request.cookies["kluc_sesija"]
+        sadrzaj_komande = list(request.form.values())          
 
         if "akcija" in komande:
             if "obrisi" in sadrzaj_komande:                    
@@ -209,13 +224,9 @@ def menadzer():
         agent_korisnika = user_agent_parser.Parse(request.headers.get('User-Agent'))
 
         if agent_korisnika["os"]["family"] in ["Windows","macos","Linux"]:
-            return redirect("/coding")
-
-        kljucevi =list(request.cookies.keys())                                
-        if "kluc_sesija" in kljucevi:
-            if request.cookies["kluc_sesija"] == kljuc_korisnika:                
-                return make_response(render_template("file_manager.html"))                 
-        return redirect("/")
+            return redirect("/coding")        
+        return make_response(render_template("file_manager.html"))                 
+        
 
 #error 404 handling
 @app.errorhandler(404)
