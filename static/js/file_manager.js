@@ -90,7 +90,7 @@ file_explorer_form.addEventListener('submit', async function(e){
 
     if(odgovor.hasOwnProperty("prebaci"))
     {
-        window.location.href = "http://janja.xyz/coding";
+        window.location.href = "https://janja.xyz/coding";
     }
 
 })
@@ -107,10 +107,63 @@ file_loader.onchange = async function(e){
         method: "PUT",
         body: slanje,        
     })
-    .then((response) => response.json())
-    .then((pod) => {return pod;});        
+    .then(response => {
+        if (!response.ok) {
+          throw Error(response.status+' '+response.statusText)
+        }
+      
+        if (!response.body) {
+          throw Error('ReadableStream not yet supported in this browser.')
+        }
+      
+        // to access headers, server must send CORS header "Access-Control-Expose-Headers: content-encoding, content-length x-file-size"
+        // server must send custom x-file-size header if gzip or other content-encoding is used
+        const contentEncoding = response.headers.get('content-encoding');
+        const contentLength = response.headers.get(contentEncoding ? 'x-file-size' : 'content-length');
+        if (contentLength === null) {
+          throw Error('Response size header unavailable');
+        }
+      
+        const total = parseInt(contentLength, 10);
+        let loaded = 0;
+      
+        return new Response(
+          new ReadableStream({
+            start(controller) {
+              const reader = response.body.getReader();
+      
+              read();
+              function read() {
+                reader.read().then(({done, value}) => {
+                  if (done) {
+                    controller.close();
+                    return; 
+                  }
+                  loaded += value.byteLength;
+                  console.log(Math.round(loaded/total*100)+'%');
+                  controller.enqueue(value);
+                  read();
+                }).catch(error => {
+                  console.error(error);
+                  controller.error(error)                  
+                })
+              }
+            }
+          })
+        );
+      })
+      .then(response => response.blob())
+      .then(data => {
+        console.log('download completed');
+        // document.getElementById('img').src = URL.createObjectURL(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });       
+
     while (file_loader.length > 0) {
         file_loader.pop();
     } 
+
     alert("Završeno otpremanje fajlova")    
 }
