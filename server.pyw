@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, redirect,request, render_template,make_response
+from flask import Flask, jsonify, redirect,request, render_template,make_response, send_file, send_from_directory
 import os,shutil,sys
 from waitress import serve
 from paste.translogger import TransLogger  
@@ -133,18 +133,20 @@ def menadzer():
         return redirect("/")  
 
     if request.method=="PUT":
-
         if "." in user.trenutni_file:
-            tren = user.trenutni_file[0:user.trenutni_file.index(r"/")]
-
-        for f in request.files.getlist("fajlovi"):                           
-            f.save(os.path.join(serverski_path, f.filename))
+            tren = user.root_fold + user.trenutni_file[len(user.root_fold):user.trenutni_file.rindex(r"/")]
+        else:
+            tren = user.root_fold + user.trenutni_file[len(user.root_fold):]
+        
+        for f in request.files.getlist("fajlovi"):            
+            f.save(os.path.join(tren, f.filename))
         return jsonify({"REZULTAT": "REZ"}), 200
 
     if request.method=="POST":
         komande = request.form.keys()
-        sadrzaj_komande = list(request.form.values())          
+        sadrzaj_komande = list(request.form.values())        
 
+        #napravi/obrisi fajlove
         if "akcija" in komande:
             if "obrisi" in sadrzaj_komande:                    
                 if "." in user.trenutni_file.split("/")[-1]:
@@ -176,7 +178,8 @@ def menadzer():
                 else:
                     os.mkdir(p)
             return jsonify({"fajlovi": user.fajlovi,"trenutni_fajl": "root_fold" + user.trenutni_file[len(user.root_fold):]})
-                
+
+        #otvaranje/zatvaranje fajlova, menjanje boja     
         if "lokacija" in komande:
             if request.form["lokacija"] == "root_fold":                
                 user.trenutni_file = user.root_fold
@@ -221,8 +224,24 @@ def menadzer():
                         user.fajlovi = user.fajlovi[0:user.index_trenutnog+1]
             return jsonify({"fajlovi": user.fajlovi,"trenutni_fajl": "root_fold" + user.trenutni_file[len(user.root_fold):],"code": user.kod_povrsina})
 
+        #odgovor kada klijent trazi stanje otvorenih fajlova/foldera
         if "dinamicki_elememnti" in komande:
             return jsonify({"fajlovi": user.fajlovi,"trenutni_fajl": "root_fold" + user.trenutni_file[len(user.root_fold):]})
+
+        #odgovor koji vraca ime fajla koji se preuzima
+        if "trenutni_file" in komande:            
+            ime = user.trenutni_file[user.trenutni_file.rindex("/")+1:]
+            if not "." in ime:
+                ime = "_f_o_l_d_e_r_"
+
+            return jsonify({"ime": ime}),200
+
+        #hendlovanje preuzimanja
+        if "preuzmi_trenutni" in komande:                            
+                try:                
+                    return send_file(user.root_fold + user.trenutni_file[len(user.root_fold):], as_attachment=True),200
+                except Exception as e:
+                    return jsonify({"greska": "greska"}),420
 
     elif request.method=="GET":        
         agent_korisnika = user_agent_parser.Parse(request.headers.get('User-Agent'))

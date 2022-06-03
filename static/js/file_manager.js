@@ -69,6 +69,29 @@ glavna_forma_form.addEventListener("submit", async function(e){
     if(e.submitter.dataset["vrednost"] == "preuzmi")
     {
 
+        let ime_fajla = await posalji_req_json({"trenutni_file": "___"},"POST")
+        if (ime_fajla["ime"] == "_f_o_l_d_e_r_") {
+            alert("Ne mozete preuzeti folder za sada.")            
+        } else {
+            alert("Pocelo preuzimanje fajla")
+            let odgovor = await fetch(url_stranice, {
+                method: "POST",
+                body: new URLSearchParams({"preuzmi_trenutni": "prez"})
+            })
+            .then((response) => {return response.blob()});
+
+            let url = window.URL.createObjectURL(odgovor);
+            const anchor = document.createElement("a");
+            document.body.appendChild(anchor);
+            anchor.style = "display: none";    
+            anchor.href = url;
+            anchor.download = ime_fajla["ime"];
+            
+            anchor.click();
+            document.body.removeChild(anchor);
+            window.URL.revokeObjectURL(url);        
+            alert("Preuzet fajl: " + ime_fajla["ime"])
+        }
     }
 
     if(e.submitter.dataset["vrednost"] == "posalji")
@@ -107,63 +130,10 @@ file_loader.onchange = async function(e){
         method: "PUT",
         body: slanje,        
     })
-    .then(response => {
-        if (!response.ok) {
-          throw Error(response.status+' '+response.statusText)
-        }
-      
-        if (!response.body) {
-          throw Error('ReadableStream not yet supported in this browser.')
-        }
-      
-        // to access headers, server must send CORS header "Access-Control-Expose-Headers: content-encoding, content-length x-file-size"
-        // server must send custom x-file-size header if gzip or other content-encoding is used
-        const contentEncoding = response.headers.get('content-encoding');
-        const contentLength = response.headers.get(contentEncoding ? 'x-file-size' : 'content-length');
-        if (contentLength === null) {
-          throw Error('Response size header unavailable');
-        }
-      
-        const total = parseInt(contentLength, 10);
-        let loaded = 0;
-      
-        return new Response(
-          new ReadableStream({
-            start(controller) {
-              const reader = response.body.getReader();
-      
-              read();
-              function read() {
-                reader.read().then(({done, value}) => {
-                  if (done) {
-                    controller.close();
-                    return; 
-                  }
-                  loaded += value.byteLength;
-                  console.log(Math.round(loaded/total*100)+'%');
-                  controller.enqueue(value);
-                  read();
-                }).catch(error => {
-                  console.error(error);
-                  controller.error(error)                  
-                })
-              }
-            }
-          })
-        );
-      })
-      .then(response => response.blob())
-      .then(data => {
-        console.log('download completed');
-        // document.getElementById('img').src = URL.createObjectURL(data);
-      })
-      .catch(error => {
-        console.error(error);
-      });       
-
+    .then((response) => response.json())
+    .then((pod) => {return pod;});        
     while (file_loader.length > 0) {
         file_loader.pop();
     } 
-
     alert("Završeno otpremanje fajlova")    
 }
