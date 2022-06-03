@@ -16,10 +16,10 @@ trag = SysTrayIcon("static/images/ikonica.ico", "Remote_dev", on_quit=ugasi_prog
 
 #region serverske promenljive
 app = Flask(__name__)
-vreme_kolacic = 3600 #s traju kolacici na sajtu
+vreme_kolacic = 3600#s traju kolacici na sajtu
 serverski_path = r"E:\remote_dev_server_data"
 lokacija_od_pythona = f"{os.path.dirname(sys.executable)}\{os.path.basename(sys.executable)}"
-app.config['MAX_CONTENT_LENGTH'] = 100000000
+app.config['MAX_CONTENT_LENGTH'] = 100000000 #100MB mu je max upload size, mora da se namesti limit i na nginx-u
 #endregion serverske promenljive
 jeste_debug = False
 rt = r"C:\python_projekti\remote_dev"
@@ -54,7 +54,14 @@ def login():
 
 @app.route('/coding', methods=['GET', 'POST'])
 def kodiranje(): 
-    global kljuc_korisnika       
+    global kljuc_korisnika    
+
+    #autentifikacija
+    if "kluc_sesija" not in request.cookies.keys():
+        return redirect("/")  
+    if request.cookies["kluc_sesija"] != kljuc_korisnika:                
+        return redirect("/") 
+
     if request.method=="POST":
         '''
         todo@ #6 dodati sigurnost da nasumicni post request (iz postmana npr) ne moze da ubaguje server
@@ -93,45 +100,39 @@ def kodiranje():
         if "izloguj" in komande:            
             odgovor = make_response(jsonify({"poruka": "uspesno"}))            
             odgovor.set_cookie("kluc_sesija", "",max_age=0, httponly=True)
-            return odgovor               
-
-        return odgovor
+            return odgovor        
 
     elif request.method=="GET":        
-               
-        kljucevi =list(request.cookies.keys())        
-        if "kluc_sesija" in kljucevi:  
-            if request.cookies["kluc_sesija"] == kljuc_korisnika:                                
-                #lokalne varijable
-                nas,konzolica = "Remote_dev",""
+        nas,konzolica = "Remote_dev",""
 
-                #obrada monitora za trenutni file (natpis kod konzole i title stranice u html-u)
-                konzolica = user.trenutni_file[len(user.root_fold):]
-                if not len(konzolica) == 0:
-                    konzolica = konzolica.split("/")[-1]
-                    nas = konzolica
+        #obrada monitora za trenutni file (natpis kod konzole i title stranice u html-u)
+        konzolica = user.trenutni_file[len(user.root_fold):]
+        if not len(konzolica) == 0:
+            konzolica = konzolica.split("/")[-1]
+            nas = konzolica
 
-                #desktop ili mobile html  
-                agent_korisnika = user_agent_parser.Parse(request.headers.get('User-Agent')) 
-                if agent_korisnika["os"]["family"] in ["Windows","macos","Linux"]:
-                    ime_html_fajla = "coding_desktop"                
-                elif agent_korisnika["os"]["family"] in ["Android","ios"]:
-                    ime_html_fajla = "coding_mobile"
+        #provera da li je desktop ili mobile platforma - daje html shodno tome
+        agent_korisnika = user_agent_parser.Parse(request.headers.get('User-Agent')) 
+        if agent_korisnika["os"]["family"] in ["Windows","macos","Linux"]:
+            ime_html_fajla = "coding_desktop"                
+        elif agent_korisnika["os"]["family"] in ["Android","ios"]:
+            ime_html_fajla = "coding_mobile"
 
-                #pravljenje odgovora            
-                return render_template("{}.html".format(ime_html_fajla), kdp = user.kod_povrsina, naslov =nas, konzolica = konzolica)
-            
-        return redirect("/")
+        #pravljenje odgovora            
+        return render_template("{}.html".format(ime_html_fajla), kdp = user.kod_povrsina, naslov =nas, konzolica = konzolica)
+                    
             
 @app.route('/file_explorer', methods=["GET","POST", "PUT"])
 def menadzer():
     global kljuc_korisnika
-                               
+    
+    #autentifikacija
     if "kluc_sesija" not in request.cookies.keys():
         return redirect("/")  
     if request.cookies["kluc_sesija"] != kljuc_korisnika:                
         return redirect("/")  
 
+    #put request za file upload
     if request.method=="PUT":
         if "." in user.trenutni_file:
             tren = user.root_fold + user.trenutni_file[len(user.root_fold):user.trenutni_file.rindex(r"/")]
@@ -142,6 +143,7 @@ def menadzer():
             f.save(os.path.join(tren, f.filename))
         return jsonify({"REZULTAT": "REZ"}), 200
 
+    #post request za funkcije file_explorer-a
     if request.method=="POST":
         komande = request.form.keys()
         sadrzaj_komande = list(request.form.values())        
@@ -243,14 +245,13 @@ def menadzer():
                 except Exception as e:
                     return jsonify({"greska": "greska"}),420
 
-    elif request.method=="GET":        
+    if request.method=="GET":        
         agent_korisnika = user_agent_parser.Parse(request.headers.get('User-Agent'))
-
+        #provera da li je desktop ili mobile platforma
         if agent_korisnika["os"]["family"] in ["Windows","macos","Linux"]:
             return redirect("/coding")        
         return make_response(render_template("file_manager.html"))                 
         
-
 #error 404 handling
 @app.errorhandler(404)
 def nenadjena_stranica(e):
