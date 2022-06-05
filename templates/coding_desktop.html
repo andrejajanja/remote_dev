@@ -37,12 +37,13 @@
 
             <div id="file_explorer_deo">
                 <form id = "forma_pravljenje_fajlovi">
-                    <div id = "file_kreator">                        
-                        <input placeholder="Ime fajla ovde" type="text" id = "file_ime_input" name = "ime">
-                        <input type="submit" class="file_exp_dugmad" name = "akcija" data-vrednost="napravi" value="Napravi file/folder">                        
-                        <input type="submit" class="file_exp_dugmad" name = "akcija" data-vrednost="obrisi" value="Obrisi file/folder">
+                    <div id = "file_kreator">
+                        <input type="image" class = "dugme_filesistem" src = "{{ url_for('static',filename='images/new_file.png') }}" name = "akcija" data-vrednost="napravi"/>
+                        <input type="image" class = "dugme_filesistem" src = "{{ url_for('static',filename='images/delete.png') }}" name = "akcija" data-vrednost="obrisi"/>
+                        <input type="image" class = "dugme_filesistem" src = "{{ url_for('static',filename='images/download.png') }}" name = "akcija" data-vrednost="preuzmi"/>
+                        <input type="image" class = "dugme_filesistem" src = "{{ url_for('static',filename='images/upload.png') }}" name = "akcija" data-vrednost="posalji"/>
+                        <input type="file" id="file_loader" multiple/>
                     </div>
-                    
                 </form>
         
                 <form id="file_explorer">

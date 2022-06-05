@@ -195,12 +195,18 @@ body{
     height: 70%;
     margin: 2%;        
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     border:rgb(171, 248, 194) solid 5px;
     padding-top: 1%;
     padding-bottom: 1%;
     font-family: 'Courier New', Courier, monospace;
 }
+
+.dugme_filesistem{
+    margin-left: 2%;  
+    width: 20%;                  
+}
+
 #file_ime_input{
     font-size:200%;        
     font-family: inherit;
@@ -222,6 +228,9 @@ body{
     background-color: rgb(171, 248, 194);
 }
 
+#file_loader{
+    display: none;
+}
 
 #file_explorer{
     height: 75%;

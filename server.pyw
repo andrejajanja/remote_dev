@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, redirect,request, render_template,make_response, send_file, send_from_directory
+from flask import Flask, jsonify, redirect,request, render_template,make_response, send_file
 import os,shutil,sys
 from waitress import serve
 from paste.translogger import TransLogger  
@@ -175,10 +175,14 @@ def menadzer():
                     p = f'{user.trenutni_file}/{sadrzaj_komande[1]}'
                     user.fajlovi.insert(user.index_trenutnog+1,["white",sadrzaj_komande[1],"root_fold" + p[len(user.root_fold):], user.fajlovi[user.index_trenutnog][3]+1])
 
-                if "." in sadrzaj_komande[1]:
-                    napravi_fajl(p) 
-                else:
-                    os.mkdir(p)
+                try:
+                    if "." in sadrzaj_komande[1]:
+                        napravi_fajl(p) 
+                    else:
+                        os.mkdir(p)
+                except FileExistsError:
+                    return jsonify({"fajlovi": "postoji_vec"})
+
             return jsonify({"fajlovi": user.fajlovi,"trenutni_fajl": "root_fold" + user.trenutni_file[len(user.root_fold):]})
 
         #otvaranje/zatvaranje fajlova, menjanje boja     
@@ -231,11 +235,14 @@ def menadzer():
             return jsonify({"fajlovi": user.fajlovi,"trenutni_fajl": "root_fold" + user.trenutni_file[len(user.root_fold):]})
 
         #odgovor koji vraca ime fajla koji se preuzima
-        if "trenutni_file" in komande:            
-            ime = user.trenutni_file[user.trenutni_file.rindex("/")+1:]
-            if not "." in ime:
+        if "trenutni_file" in komande:      
+            print(user.trenutni_file)
+            try:
+                ime = user.trenutni_file[user.trenutni_file.rindex("/")+1:]
+            except:                
+                ime = user.trenutni_file[user.trenutni_file.rindex("\\")+1:]
+            if not "." in ime: #ukoliko je zahtev za preuzimanje foldera, obavestava js da kaze korisniku da to nije dodato
                 ime = "_f_o_l_d_e_r_"
-
             return jsonify({"ime": ime}),200
 
         #hendlovanje preuzimanja
@@ -263,5 +270,14 @@ if __name__=="__main__":
         app.run(port = 5000)
     else:
         trag.start()
-        serve(TransLogger(app, setup_console_handler=False, logger_name="Remote_dev", format = ('[%(time)s] Metod: %(REQUEST_METHOD)s Status: %(status)s\tVelicina: %(bytes)s [bytes]\tTrazeno: %(REQUEST_URI)s')),host='0.0.0.0', port=5000, url_scheme = "https")
+
+        serve(TransLogger(app, 
+            setup_console_handler=False,
+            logger_name="Remote_dev", 
+            format = ('[%(time)s] Metod: %(REQUEST_METHOD)s Status: %(status)s\tVelicina: %(bytes)s [bytes]\tTrazeno: %(REQUEST_URI)s')),
+            host='0.0.0.0',
+            port=5000, 
+            url_scheme = "https"
+        )
+
         trag.shutdown()
