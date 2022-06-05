@@ -135,7 +135,10 @@ def menadzer():
     #put request za file upload
     if request.method=="PUT":
         if "." in user.trenutni_file:
-            tren = user.root_fold + user.trenutni_file[len(user.root_fold):user.trenutni_file.rindex(r"/")]
+            try:
+                tren = user.root_fold + user.trenutni_file[len(user.root_fold):user.trenutni_file.rindex("/")]
+            except:
+                tren = user.root_fold + user.trenutni_file[len(user.root_fold):user.trenutni_file.rindex("\\")]
         else:
             tren = user.root_fold + user.trenutni_file[len(user.root_fold):]
         

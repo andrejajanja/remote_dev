@@ -19,18 +19,6 @@ async function posalji_req_json(data, tip, url_str)
     return podaci;
 }
 
-async function ucitavanje_animacija_izvrsi_dugme(){
-    let s = "="
-    let i = 0
-    while(izvrsi_dugme.disabled){
-        if(i==7){i=0}
-        izvrsi_dugme.value = "|"+s.repeat(i)+"|"
-        i+=1
-        await sleep(300)             
-    }
-    izvrsi_dugme.value = "Izvrši"
-}
-
 function napravi_dugmad(elems){
     while (kutija_za_dugmice.lastElementChild) {
         kutija_za_dugmice.removeChild(kutija_za_dugmice.lastElementChild);
