@@ -31,17 +31,19 @@
     }
 
     .unos_polje{
-        font-family: 'Segoe UI';
+        font-family: 'Courier New', Courier, monospace;
         width: 100%;
         height: 30%;
-        margin-left: 5%;        
+        margin-left: 5%;                      
     }
 
     .polja_za_unosenje{
         width: 80%;
         height: 50%;
-        font-size: 300%;
-        border-width: 2px;
+        font-size: 250%;        
+        border: 10px outset rgb(171, 248, 194);
+        border-radius: 50px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .para{
@@ -49,13 +51,17 @@
     }
 
     #login_dugme{
+        color: rgb(255, 255, 255);
         align-self: center;
         margin-top: 5%;
         width: 80%;
         height: 12.5%;
-        font-size: 200%;
+        font-size: 270%;
+        background-color: rgb(88, 194, 129);
         border-radius: 5px;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        border: 10px outset rgb(124, 255, 166);
+        border-radius: 50px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;        
     }
 
     #poruka{

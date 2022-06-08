@@ -22,8 +22,8 @@ lokacija_od_pythona = f"{os.path.dirname(sys.executable)}\{os.path.basename(sys.
 app.config['MAX_CONTENT_LENGTH'] = 100000000 #100MB mu je max upload size, mora da se namesti limit i na nginx-u
 #endregion serverske promenljive
 jeste_debug = False
-rt = r"C:\python_projekti\remote_dev"
-#rt = r'C:\\Artificial_Inteligence\\uho'
+#rt = r"C:\python_projekti\remote_dev"
+rt = r'C:\\Artificial_Inteligence\\uho'
 nalog = ["",'Andreja', '92bffb0826ab25ce7877d6d1bd4a42f4', rt, 'rgb(171, 248, 194)']
 kljuc_korisnika = ""
 
@@ -71,20 +71,29 @@ def kodiranje():
         kljuc_korisnika = request.cookies["kluc_sesija"]
         if "kontrola" in komande:
             if "zaustavi" in sadrzaj_komande:
-                user.proces.terminate()
+                user.proces.terminate()                
                 return jsonify({"rezultat": "uspesno"})
 
             if "izvrsi" in sadrzaj_komande:                                            
                 if ".py" not in user.trenutni_file:                    
                     return jsonify({"konzola": 0})
-                user.proces = Popen([lokacija_od_pythona, "-u", user.trenutni_file], stdout=open(f'{serverski_path}/{kljuc_korisnika}.txt', 'w+'), cwd=user.root_fold)                
-                return jsonify({"konzola": f'root_fold{user.trenutni_file[len(user.root_fold):]}>\n'})
 
-            if "proveri_konzolu" in sadrzaj_komande:
-                user.konzola = procitaj_file(f'{serverski_path}/{kljuc_korisnika}.txt')                     
+                if ("tensorflow" and "model.fit(") in procitaj_file(user.trenutni_file):
+                    user.formatiranje = "tf"
+
+                user.proces = Popen([lokacija_od_pythona, "-u", user.trenutni_file], stdout=open(f'{serverski_path}/{kljuc_korisnika}.txt', 'w+'), cwd=user.root_fold)                
+                return jsonify({"konzola": f'root_fold{user.trenutni_file[len(user.root_fold):]}>'})
+
+            if "proveri_konzolu" in sadrzaj_komande:                
+                if user.formatiranje == "":
+                    user.konzola = procitaj_file(f'{serverski_path}/{kljuc_korisnika}.txt')
+                else:
+                    user.konzola = procitaj_file_tf_format(f'{serverski_path}/{kljuc_korisnika}.txt')
+
                 if user.proces.poll() == 0:
                     os.remove(f"{serverski_path}/{kljuc_korisnika}.txt")                    
                     user.proces = ""
+                    user.formatiranje = ""                  
                     return jsonify({"konzola": user.konzola, "nastavi": False})
                 else:                    
                     return jsonify({"konzola": user.konzola, "nastavi": True})
@@ -108,18 +117,17 @@ def kodiranje():
         #obrada monitora za trenutni file (natpis kod konzole i title stranice u html-u)
         konzolica = user.trenutni_file[len(user.root_fold):]
         if not len(konzolica) == 0:
-            konzolica = konzolica.split("/")[-1]
-            nas = konzolica
+            konzolica = konzolica.split("/")[-1]            
 
         #provera da li je desktop ili mobile platforma - daje html shodno tome
         agent_korisnika = user_agent_parser.Parse(request.headers.get('User-Agent')) 
         if agent_korisnika["os"]["family"] in ["Windows","macos","Linux"]:
-            ime_html_fajla = "coding_desktop"                
-        elif agent_korisnika["os"]["family"] in ["Android","ios"]:
-            ime_html_fajla = "coding_mobile"
+            return render_template("coding_desktop.html", naslov =nas, konzolica = konzolica)
+        elif agent_korisnika["os"]["family"] in ["Android","ios"]:            
+            return render_template("coding_mobile.html",kdp = user.kod_povrsina, naslov =nas, konzolica = konzolica)
 
         #pravljenje odgovora            
-        return render_template("{}.html".format(ime_html_fajla), kdp = user.kod_povrsina, naslov =nas, konzolica = konzolica)
+        
                     
             
 @app.route('/file_explorer', methods=["GET","POST", "PUT"])
@@ -204,16 +212,18 @@ def menadzer():
             user.index_trenutnog = vrati_element_po_adresi(user.fajlovi,f'root_fold{user.trenutni_file[len(user.root_fold):]}')
             b = user.fajlovi[user.index_trenutnog][0] 
 
+            #ukoliko je u pitanju fajl
             if "." in ime_file: 
-                if b == "white":
-                    user.konzola = ""
-                    user.kod_povrsina = procitaj_file(user.trenutni_file)
+                if b == "white":                                  
+                    user.kod_povrsina = procitaj_file(user.trenutni_file)                                            
                     user.fajlovi = ukloni_boje_svih_datoteka(user.fajlovi)
-                    user.fajlovi[user.index_trenutnog][0] = user.select_color   
-                    return jsonify({"fajlovi": user.fajlovi,"trenutni_fajl": "root_fold" + user.trenutni_file[len(user.root_fold):], "prebaci": "da", "code": user.kod_povrsina})
+                    user.fajlovi[user.index_trenutnog][0] = user.select_color                    
+                    return jsonify({"fajlovi": user.fajlovi,"trenutni_fajl": "root_fold" + user.trenutni_file[len(user.root_fold):], "prebaci": "da"})
                 else:
                     user.fajlovi[user.index_trenutnog][0] = "white"
                     user.kod_povrsina = ""   
+            
+            #ukoliko je u pitanju folder
             else:
                 if b == "white":
                     user.fajlovi[user.index_trenutnog][0] = user.select_color
@@ -231,15 +241,14 @@ def menadzer():
                         user.fajlovi = user.fajlovi[0:user.index_trenutnog+1] + user.fajlovi[pom_index:]
                     except:
                         user.fajlovi = user.fajlovi[0:user.index_trenutnog+1]
-            return jsonify({"fajlovi": user.fajlovi,"trenutni_fajl": "root_fold" + user.trenutni_file[len(user.root_fold):],"code": user.kod_povrsina})
+            return jsonify({"fajlovi": user.fajlovi,"trenutni_fajl": "root_fold" + user.trenutni_file[len(user.root_fold):]})
 
         #odgovor kada klijent trazi stanje otvorenih fajlova/foldera
         if "dinamicki_elememnti" in komande:
             return jsonify({"fajlovi": user.fajlovi,"trenutni_fajl": "root_fold" + user.trenutni_file[len(user.root_fold):]})
 
         #odgovor koji vraca ime fajla koji se preuzima
-        if "trenutni_file" in komande:      
-            print(user.trenutni_file)
+        if "trenutni_file" in komande:                  
             try:
                 ime = user.trenutni_file[user.trenutni_file.rindex("/")+1:]
             except:                

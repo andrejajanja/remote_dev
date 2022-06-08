@@ -16,11 +16,11 @@ body{
 }
  
 ::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 6px rgb(171, 248, 194);
+  box-shadow: inset 0 0 6px rgb(0, 255, 76);
 }
  
 ::-webkit-scrollbar-thumb {
-  background-color:  #019500;
+  background-color:  #71f171;
   /*outline: 1px solid slategrey;*/
 }
 
@@ -90,7 +90,7 @@ body{
     cursor: pointer;
 }
 
-#deo_povrsina_kodiranje{
+#preview_povrsina{
     margin-left:1%;
     margin-top:1%;
     width: var(--glavni_delovi-sirina);
@@ -110,6 +110,17 @@ body{
     font-size: 120%;
     color: white;
     padding-top: 0.25%;      
+}
+
+#slika_kontejner{
+    display: none;
+    height: 100%;
+    width: 100%;    
+    align-content: flex-end;    
+    border-color: rgb(12, 82, 29);   
+    border-width: 2px;    
+    font-size: 120%;    
+    padding-top: 0.25%;
 }
 
 #prog_kontrole{        

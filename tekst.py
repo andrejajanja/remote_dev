@@ -9,3 +9,5 @@ print(random(), random(), random())
 seed(1)
 # generate some random numbers
 print(random(), random(), random())
+
+print("djkashkjdash")

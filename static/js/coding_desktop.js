@@ -8,6 +8,12 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function ekstenzija_od_imena(ime){    
+    i = ime.lastIndexOf(".")
+    if (i==-1) {return "folder"}    
+    return ime.substring(i+1)
+}
+
 async function posalji_req_json(data, tip, url_str)
 {
     const podaci = await fetch(url_str, {
@@ -172,7 +178,11 @@ const forma_fajlovi = document.querySelector("#forma_pravljenje_fajlovi");
 const ime_fajla = document.querySelector("#file_ime_input");
 const kutija_za_dugmice = document.querySelector("#files_view");
 const forma_zaglavlje = document.querySelector("#zaglavlje");
-const file_loader = document.getElementById("file_loader")
+const file_loader = document.getElementById("file_loader");
+const slika_kont = document.getElementById("slika_kontejner")
+
+const eks_slika = ["jpg","png","jpeg","ico","bmp"]
+const eks_txt = ["py","pyw","txt","html","css","js","md","xml","csv"]
 
 let jeste_konzola = true
 let inicijalni_odgovor="";
@@ -226,20 +236,42 @@ forma_fajlovi.addEventListener("submit", async function(e){
     }
 })
 
+//funckcija koja "otvara" fajl
 file_explorer_form.addEventListener('submit', async function(e){
     e.preventDefault();
-    var odgovor = await posalji_req_json({lokacija: e.submitter.dataset['put']}, "POST", url_filesistem)            
-    if ("code" in odgovor) {
-        code_povrs.value = odgovor["code"]    
+    let eks = ekstencija_od_imena(e.submitter.dataset["put"])    
+
+    if(eks == "folder"){
+        let odgovor = await posalji_req_json({lokacija: e.submitter.dataset['put']}, "POST", url_filesistem);
+        napravi_dugmad(odgovor)
+        return;
     }
-    else
-    {
-        code_povrs.value = ""
+    
+    if(eks_txt.includes(eks)){     
+        let odgovor = await fetch(url_filesistem, {method: "POST",body: new URLSearchParams({lokacija: e.submitter.dataset['put']})
+        })
+        .then(response => {return response.text()})
+        slika_kont.style.display = "none";
+        code_povrs.style.display = "block";
+        code_povrs.value = odgovor;
+    }
+    else if(eks_slika.includes(eks)){
+        
+        let odgovor = await fetch(url_filesistem, {method: "POST",body: new URLSearchParams({lokacija: e.submitter.dataset['put']})
+        })
+        .then(response =>{return response.text()})
+        code_povrs.value = "";
+        code_povrs.style.display = "none";
+        slika_kont.style.display = "block";
+        slika_kont.src = "data:image/png;charset=utf-8;base64," + odgovor;
+    }
+    else{
+        slika_kont.style.display = "none";
+        code_povrs.style.display = "block";
+        code_povrs.value = "Fajl se ne moze interpretirati kao slika ili tekst";
     }
 
-    let fajl = odgovor["trenutni_fajl"].split("/").pop()
-
-    napravi_dugmad(odgovor)
+    uzmi_elemente();    
 })
 
 forma_zaglavlje.addEventListener("submit", async function(e){
