@@ -2,7 +2,7 @@ from flask import Flask, jsonify, redirect,request, render_template,make_respons
 import os,shutil,sys
 from waitress import serve
 from paste.translogger import TransLogger  
-from subprocess import Popen
+from subprocess import CREATE_NEW_CONSOLE, Popen,check_output
 from ua_parser import user_agent_parser
 from infi.systray import SysTrayIcon
 from lib import *
@@ -17,7 +17,7 @@ trag = SysTrayIcon("static/images/ikonica.ico", "Remote_dev", on_quit=ugasi_prog
 #region serverske promenljive
 app = Flask(__name__)
 vreme_kolacic = 3600#s traju kolacici na sajtu
-serverski_path = r"E:\remote_dev_server_data"
+serverski_path = os.getcwd()
 lokacija_od_pythona = f"{os.path.dirname(sys.executable)}\{os.path.basename(sys.executable)}"
 app.config['MAX_CONTENT_LENGTH'] = 100000000 #100MB mu je max upload size, mora da se namesti limit i na nginx-u
 #endregion serverske promenljive
@@ -99,12 +99,19 @@ def kodiranje():
                     return jsonify({"konzola": user.konzola, "nastavi": True})
                             
             if "sacuvaj" in sadrzaj_komande and "." in user.trenutni_file:                
-                user.kod_povrsina = request.form["code"]                            
-                with open(user.trenutni_file,"w+", encoding="UTF-8") as f:                    
-                    f.write(user.kod_povrsina)
-                return jsonify({"status": 1})
-            else:
-                return jsonify({"status": 0})
+                try:
+                    user.kod_povrsina = request.form["code"]                            
+                    with open(user.trenutni_file,"w+", encoding="UTF-8") as f:                    
+                        f.write(user.kod_povrsina)
+                    return jsonify({"status": 1})
+                except:            
+                    return jsonify({"status": 0})
+
+            if "terminal_run" in sadrzaj_komande[0]:
+                komanda = sadrzaj_komande[1]                
+
+                user.proces = Popen(komanda, stdout=open(f'{serverski_path}/{kljuc_korisnika}.txt', 'w+'), shell=True) 
+                return jsonify({"konzola": f'root_fold{user.trenutni_file[len(user.root_fold):]}>'})
                                     
         if "izloguj" in komande:            
             odgovor = make_response(jsonify({"poruka": "uspesno"}))            

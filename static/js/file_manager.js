@@ -62,13 +62,11 @@ glavna_forma_form.addEventListener("submit", async function(e){
             }else{
                 return;
             }
-        }
-        
+        }        
     }
 
     if(e.submitter.dataset["vrednost"] == "preuzmi")
     {
-
         let ime_fajla = await posalji_req_json({"trenutni_file": "___"},"POST")
         if (ime_fajla["ime"] == "_f_o_l_d_e_r_") {
             alert("Ne mozete preuzeti folder za sada.")            
@@ -115,7 +113,6 @@ file_explorer_form.addEventListener('submit', async function(e){
     {
         window.location.href = "https://janja.xyz/coding";
     }
-
 })
 
 file_loader.onchange = async function(e){   

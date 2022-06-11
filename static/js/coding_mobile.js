@@ -19,12 +19,18 @@ const code_povrs = document.querySelector("#povrsina_kodiranje");
 const konzola = document.getElementById("koznola_deo");
 const sacuvaj_dugme = document.getElementById("sacu");
 const izvrsi_dugme = document.getElementById("izvr")
+const term = document.getElementById("izvrsiii");
+
+if(code_povrs.value == "0"){
+    code_povrs.value = "Fajl sa ovom ekstenzijom se trenutno\nne može prikazati u pretraživaču.";
+}
 
 let jeste_konzola = true
 let inicijalni_odgovor="";
 let pom_konzola = "";
 let izvrsava = false;
 let konzo = "";
+
 glavna_forma_form.addEventListener("submit", async function(e){
     e.preventDefault()                       
     if(e.submitter.dataset.funkcija == "odjava"){                                             
@@ -46,7 +52,7 @@ glavna_forma_form.addEventListener("submit", async function(e){
         odgovor = await posalji_req_json({kontrola: "izvrsi"},"POST");
         
         if(odgovor["konzola"] == 0){
-            konzola.value = "Neophodan je ime_fajla.py file da biste ga izvrsili";
+            konzola.value = "Neophodan je ime_fajla.py file da biste ga izvršili";
             izvrsi_dugme.value = "Izvrši";                  
             return;
         }                
@@ -74,7 +80,7 @@ glavna_forma_form.addEventListener("submit", async function(e){
         if (odgovor["konzola"]) {
             konzola.value += "\n" + odgovor["konzola"]    
         }
-        izvrsi_dugme.value = "Izvrsi";        
+        izvrsi_dugme.value = "Izvrši";        
         izvrsava = false
         konzo = konzola.value;
         return;
@@ -108,13 +114,56 @@ glavna_forma_form.addEventListener("submit", async function(e){
     }
 
     if(e.submitter.dataset.funkcija == "terminal"){
-        let komanda = konzola.value.substring(konzo.length);
+
+        if (term.value == "Zaustavi") {
+            izvrsava = false                    
+            term.value = "Terminal";
+            odgovor = await posalji_req_json({kontrola: "zaustavi"}, "POST")                                
+            return;
+        }
+
+        let komm = konzola.value.substring(konzo.length);
+        if(komm == ""){
+            alert("Morate uneti terminalnu komandu da bi ste je izvršili");
+            return;
+        }        
+        konzo = konzola.value + "\n";
+        konzola.value += "\n";        
+        odgovor = await posalji_req_json({kontrola: "terminal_run", izvrsiti: komm}, "POST");
+        konzola.value = konzo
+        term.value = "Zaustavi";
+        izvrsava = true                     
+        inicijalni_odgovor="";
+        pom_konzola = "";
+
+        if(jeste_konzola){
+            inicijalni_odgovor= konzola.value + odgovor["konzola"] + "\n"
+            konzola.value = inicijalni_odgovor+ pom_konzola
+            jeste_konzola=false
+        }else{
+            inicijalni_odgovor= konzola.value + "\n"
+        }
+                                        
+        while (izvrsava) {
+            pom_konzola = await posalji_req_json({kontrola: "proveri_konzolu"}, "POST")
+            if(!pom_konzola["nastavi"]){
+                konzola.value = inicijalni_odgovor+ pom_konzola["konzola"]
+                break
+            }
+            konzola.value = inicijalni_odgovor+ pom_konzola["konzola"]
+            await sleep(1000);
+        }                
+
+        if (odgovor["konzola"]) {
+            konzola.value += "\n" + odgovor["konzola"]    
+        }
+        term.value = "Terminal";       
+        izvrsava = false
         konzo = konzola.value;
-        console.log(komanda);
-        //zavrsi slanje requesta i serversku funkcionalnost za izvrsavanje komande
-        return;
+        return;                
     }
 })
+
 konzola.onkeyup = function(){
     if(konzola.value.indexOf(konzo) === -1){
         konzola.value = konzo
