@@ -1,7 +1,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />        
-        <title>{{naslov}}</title>
+        <title>Remote_dev</title>
         <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='styles/coding_mobile.css') }}"/>
         <link rel = "apple-touch-icon" sizes = "180x180" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">
         <link rel = "icon" type = "image/png" sizes = "32x32" href = "{{ url_for('static',filename='images/ikonica_32x32.png') }}">
@@ -26,7 +26,7 @@
                 <input class = "control_dugme" id ="izvr" type="submit" data-funkcija="Izvrsi" name="kontrola" value="Izvrši"/>                
                 <input class = "control_dugme" id="sacu" type="submit" data-funkcija="Sacuvaj" name="kontrola" value="Sačuvaj"/>
                 <input class = "control_dugme" id="ocisti_konzolu" type="submit" data-funkcija="ocisti" name="kontrola" value="Očisti_k"/>
-                <input class = "control_dugme" id="izvrsiii" type="submit" data-funkcija="terminal" name="kontrola" value="Terminal"/>
+                <input class = "control_dugme" id="terminal_izvr" type="submit" data-funkcija="terminal" name="kontrola" value="Terminal"/>
             </div>
             <p id = "naslov_konzola">Konzola: {{konzolica}}</p>            
             <textarea id="koznola_deo" wrap="off" name ="kontrola"></textarea>

@@ -1,8 +1,9 @@
+import subprocess
 from flask import Flask, jsonify, redirect,request, render_template,make_response, send_file
 import os,shutil,sys
 from waitress import serve
 from paste.translogger import TransLogger  
-from subprocess import CREATE_NEW_CONSOLE, Popen,check_output
+from subprocess import Popen, STARTUPINFO
 from ua_parser import user_agent_parser
 from infi.systray import SysTrayIcon
 from lib import *
@@ -26,8 +27,8 @@ jeste_debug = False
 rt = r'C:\\Artificial_Inteligence\\uho'
 nalog = ["",'Andreja', '92bffb0826ab25ce7877d6d1bd4a42f4', rt, 'rgb(171, 248, 194)']
 kljuc_korisnika = ""
-
 user = korisnik(nalog)
+file_pointer = ""
 
 #region stranice
 @app.route('/', methods=['GET', 'POST'])
@@ -54,7 +55,7 @@ def login():
 
 @app.route('/coding', methods=['GET', 'POST'])
 def kodiranje(): 
-    global kljuc_korisnika    
+    global kljuc_korisnika,file_pointer 
 
     #autentifikacija
     if "kluc_sesija" not in request.cookies.keys():
@@ -71,17 +72,30 @@ def kodiranje():
         kljuc_korisnika = request.cookies["kluc_sesija"]
         if "kontrola" in komande:
             if "zaustavi" in sadrzaj_komande:
+                
                 user.proces.terminate()                
+                file_pointer.close()                
                 return jsonify({"rezultat": "uspesno"})
 
-            if "izvrsi" in sadrzaj_komande:                                            
-                if ".py" not in user.trenutni_file:                    
-                    return jsonify({"konzola": 0})
+            if "izvrsi" in sadrzaj_komande:                                                                                           
+                file_pointer = open(f'{serverski_path}/{kljuc_korisnika}.txt', 'w+') #otvaranje stream-a na trenutni konzolni fajl
 
-                if ("tensorflow" and "model.fit(") in procitaj_file(user.trenutni_file):
-                    user.formatiranje = "tf"
+                if sadrzaj_komande[1] == "py":
+                    #grana u kojoj se izvrsava python skripta
 
-                user.proces = Popen([lokacija_od_pythona, "-u", user.trenutni_file], stdout=open(f'{serverski_path}/{kljuc_korisnika}.txt', 'w+'), cwd=user.root_fold)                
+                    if ".py" not in user.trenutni_file: #da li je uopste otvoren python file   
+                        return jsonify({"konzola": 0})
+
+                    if ("tensorflow" and "model.fit(") in procitaj_file(user.trenutni_file): #da li treba da se koristi formater za TF
+                        user.formatiranje = "tf"  
+                        
+                    user.proces = Popen([lokacija_od_pythona, "-u", user.trenutni_file], stdout=file_pointer, cwd=user.root_fold)
+                else:
+                    #grana u kojoj se izvrsava terminalna skripta                    
+                    strt = subprocess.STARTUPINFO()
+                    strt.dwFlags |= subprocess.STARTF_USESHOWWINDOW                    
+                    user.proces = Popen(sadrzaj_komande[1], stdout=file_pointer,stderr=file_pointer, text= True, startupinfo=strt)
+                    
                 return jsonify({"konzola": f'root_fold{user.trenutni_file[len(user.root_fold):]}>'})
 
             if "proveri_konzolu" in sadrzaj_komande:                
@@ -89,14 +103,16 @@ def kodiranje():
                     user.konzola = procitaj_file(f'{serverski_path}/{kljuc_korisnika}.txt')
                 else:
                     user.konzola = procitaj_file_tf_format(f'{serverski_path}/{kljuc_korisnika}.txt')
-
+                
                 if user.proces.poll() == 0:
+                    file_pointer.close()
                     os.remove(f"{serverski_path}/{kljuc_korisnika}.txt")                    
+                    
+                    user.formatiranje = ""                         
                     user.proces = ""
-                    user.formatiranje = ""                  
                     return jsonify({"konzola": user.konzola, "nastavi": False})
                 else:                    
-                    return jsonify({"konzola": user.konzola, "nastavi": True})
+                    return jsonify({"konzola": user.konzola, "nastavi": True})                                
                             
             if "sacuvaj" in sadrzaj_komande and "." in user.trenutni_file:                
                 try:
@@ -106,12 +122,6 @@ def kodiranje():
                     return jsonify({"status": 1})
                 except:            
                     return jsonify({"status": 0})
-
-            if "terminal_run" in sadrzaj_komande[0]:
-                komanda = sadrzaj_komande[1]                
-
-                user.proces = Popen(komanda, stdout=open(f'{serverski_path}/{kljuc_korisnika}.txt', 'w+'), shell=True) 
-                return jsonify({"konzola": f'root_fold{user.trenutni_file[len(user.root_fold):]}>'})
                                     
         if "izloguj" in komande:            
             odgovor = make_response(jsonify({"poruka": "uspesno"}))            
@@ -133,9 +143,7 @@ def kodiranje():
         elif agent_korisnika["os"]["family"] in ["Android","ios"]:            
             return render_template("coding_mobile.html",kdp = user.kod_povrsina, naslov =nas, konzolica = konzolica)
 
-        #pravljenje odgovora            
-        
-                    
+        #pravljenje odgovora                            
             
 @app.route('/file_explorer', methods=["GET","POST", "PUT"])
 def menadzer():
