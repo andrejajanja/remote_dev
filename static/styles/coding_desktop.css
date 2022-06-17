@@ -218,33 +218,12 @@ body{
     width: 20%;                  
 }
 
-#file_ime_input{
-    font-size:200%;        
-    font-family: inherit;
-    width: 95%;
-    align-self: center;
-    height: 100%;
-    float: left;
-    border: black solid 3px;
-}
-
-.file_exp_dugmad{
-    margin-top: 1%;
-    font-family: inherit;
-    width: 95%;
-    align-self: center;
-    height: 100%;
-    float: right;
-    font-size: 150%;
-    background-color: rgb(171, 248, 194);
-}
-
 #file_loader{
     display: none;
 }
 
 #file_explorer{
-    height: 75%;
+    height: 90%;
     overflow-y: auto;
 }
 
@@ -252,13 +231,12 @@ body{
     display: flex;
     flex-direction: column;
     width: 96%;        
-    margin:2%;
-    height: 100%;    
+    margin:2%;      
     box-sizing: border-box;
 }
 .file_folder{
     width: 60%;
-    margin-top: 1%;
-    height: 5%;
+    margin-top: 1%;    
+    height: 30px;
     font-size:80%;
 }

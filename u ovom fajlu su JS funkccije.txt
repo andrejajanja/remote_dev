@@ -1,0 +1,29 @@
+//ovo je za ucitavanje slike js
+
+if(eks_txt.includes(eks)){     
+        let odgovor = await fetch(url_filesistem, {method: "POST",body: new URLSearchParams({lokacija: e.submitter.dataset['put']})
+        })
+        .then(response => {return response.text()})
+        slika_kont.style.display = "none";
+        code_povrs.style.display = "block";
+        code_povrs.value = odgovor;
+
+        return;
+}
+else if(eks_slika.includes(eks)){
+        
+        let odgovor = await fetch(url_filesistem, {method: "POST",body: new URLSearchParams({lokacija: e.submitter.dataset['put']})
+        })
+        .then(response =>{return response.text()})
+        code_povrs.value = "";
+        code_povrs.style.display = "none";
+        slika_kont.style.display = "block";
+        slika_kont.src = "data:image/png;charset=utf-8;base64," + odgovor;
+    }
+    else{
+        slika_kont.style.display = "none";
+        code_povrs.style.display = "block";
+        code_povrs.value = "Fajl se ne moze interpretirati kao slika ili tekst";
+    }
+
+    uzmi_elemente();   

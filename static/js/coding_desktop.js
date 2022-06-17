@@ -117,7 +117,7 @@ async function izvrsi_fajl(){
     izvrsi_dugme.dataset.funkcija = "Zaustavi";
     izvrsi_dugme.value = "Zaustavi";
     izvrsava = true
-    odgovor = await posalji_req_json({kontrola: "izvrsi"},"POST", url_code);
+    odgovor = await posalji_req_json({kontrola: "izvrsi", sta: "py"},"POST", url_code);
     if(odgovor["konzola"] == 0){
         konzola.value = "Neophodan je ime_fajla.py file da biste ga izvrsili";
         izvrsi_dugme.value = "Izvrši";
@@ -152,6 +152,7 @@ async function izvrsi_fajl(){
     izvrsi_dugme.value = "Izvrši";
     izvrsi_dugme.dataset.funkcija = "Izvrsi"
     izvrsava = false
+    var notifi = new Notification(title = "Zavvrseno izvrsavanje komande/skripte!", body = "Dodaj ovde koji se fajl izvrsio");
     return;
 }
 
@@ -164,8 +165,13 @@ async function zaustavi_izvrsavanje(){
 }
 
 //programske promenljive
-const url_code = "https://janja.xyz/coding";
-const url_filesistem = "https://janja.xyz/file_explorer";
+//const url_code = "https://janja.xyz/coding";
+//const url_filesistem = "https://janja.xyz/file_explorer";
+
+const lok = new URL(window.location.href);
+
+const url_code = lok.protocol+ "//" +lok.host+"/coding";
+const url_filesistem = lok.protocol+ "//" +lok.host+ "/file_explorer";
 
 const forma_za_kodiranje = document.querySelector("#forma_kodiranje");
 const code_povrs = document.querySelector("#povrsina_kodiranje");
@@ -188,8 +194,23 @@ let jeste_konzola = true
 let inicijalni_odgovor="";
 let pom_konzola = "";
 let izvrsava = false;
+let notif = false;
+if (Notification.permission === "denied") {
+    Notification.requestPermission().then(function (permission) {
+      // If the user accepts, let's create a notification
+      if (permission === "granted") {
+
+        notif = true;
+      }
+    });
+}
+
 
 uzmi_elemente()
+
+if(code_povrs.value == "0"){
+    code_povrs.value = "Fajl sa ovom ekstenzijom se trenutno\nne može prikazati u pretraživaču.";
+}
 
 forma_za_kodiranje.addEventListener("submit", async function(e){   
     e.preventDefault();   
@@ -239,7 +260,7 @@ forma_fajlovi.addEventListener("submit", async function(e){
 //funckcija koja "otvara" fajl
 file_explorer_form.addEventListener('submit', async function(e){
     e.preventDefault();
-    let eks = ekstencija_od_imena(e.submitter.dataset["put"])    
+    let eks = ekstenzija_od_imena(e.submitter.dataset["put"])    
 
     if(eks == "folder"){
         let odgovor = await posalji_req_json({lokacija: e.submitter.dataset['put']}, "POST", url_filesistem);
@@ -247,38 +268,28 @@ file_explorer_form.addEventListener('submit', async function(e){
         return;
     }
     
-    if(eks_txt.includes(eks)){     
-        let odgovor = await fetch(url_filesistem, {method: "POST",body: new URLSearchParams({lokacija: e.submitter.dataset['put']})
-        })
-        .then(response => {return response.text()})
-        slika_kont.style.display = "none";
-        code_povrs.style.display = "block";
-        code_povrs.value = odgovor;
-    }
-    else if(eks_slika.includes(eks)){
+   
+    let odgovor = await fetch(url_filesistem, {method: "POST",body: new URLSearchParams({lokacija: e.submitter.dataset['put']})
+    })
+    .then((response) => {return response.json()})
         
-        let odgovor = await fetch(url_filesistem, {method: "POST",body: new URLSearchParams({lokacija: e.submitter.dataset['put']})
-        })
-        .then(response =>{return response.text()})
-        code_povrs.value = "";
-        code_povrs.style.display = "none";
-        slika_kont.style.display = "block";
-        slika_kont.src = "data:image/png;charset=utf-8;base64," + odgovor;
+    slika_kont.style.display = "none";
+    code_povrs.style.display = "block";
+    code_povrs.value = odgovor["kodd"];
+    if(code_povrs.value == "0"){
+        code_povrs.value = "Fajl sa ovom ekstenzijom se trenutno\nne može prikazati u pretraživaču.";
     }
-    else{
-        slika_kont.style.display = "none";
-        code_povrs.style.display = "block";
-        code_povrs.value = "Fajl se ne moze interpretirati kao slika ili tekst";
-    }
-
-    uzmi_elemente();    
+    napravi_dugmad(odgovor)
+    return;
+     
 })
 
 forma_zaglavlje.addEventListener("submit", async function(e){
     e.preventDefault();                       
     if(e.submitter.dataset.funkcija == "odjava"){                                             
         odgovor = await posalji_req_json({izloguj: "pokreni"}, "POST", url_code)
-        window.location.href = "https://janja.xyz"
+        //window.location.href = "https://janja.xyz";
+        window.location.href = lok.protocol+ "//" +lok.host;        
     }
 })
 
@@ -324,6 +335,9 @@ window.addEventListener('keydown', async function (event) {
     }
     if (event.altKey && event.code === 'KeyD'){
         preuzmi_fajl();
-    }      
+    }  
+    if(event.altKey && event.code === 'KeyB'){
+        alert("PRECICE, ALT +:\n\n\tSacuvaj: S\n\tNovi fajl folder: N\n\tObrisi trenutni: O\n\tIzvrsi skriptu: i\n\tZaustavljanje skripte: Z\n\tSlanje file-a: P\n\tPreuzimanje trenutnog: D");
+    }
 });
 //if (event.altKey && event.code === 'KeyS'){}  

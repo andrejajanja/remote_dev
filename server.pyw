@@ -3,7 +3,7 @@ from flask import Flask, jsonify, redirect,request, render_template,make_respons
 import os,shutil,sys
 from waitress import serve
 from paste.translogger import TransLogger  
-from subprocess import Popen, STARTUPINFO
+from subprocess import Popen, STARTUPINFO, STARTF_USESHOWWINDOW
 from ua_parser import user_agent_parser
 from infi.systray import SysTrayIcon
 from lib import *
@@ -92,8 +92,8 @@ def kodiranje():
                     user.proces = Popen([lokacija_od_pythona, "-u", user.trenutni_file], stdout=file_pointer, cwd=user.root_fold)
                 else:
                     #grana u kojoj se izvrsava terminalna skripta                    
-                    strt = subprocess.STARTUPINFO()
-                    strt.dwFlags |= subprocess.STARTF_USESHOWWINDOW                    
+                    strt = STARTUPINFO()
+                    strt.dwFlags |= STARTF_USESHOWWINDOW                    
                     user.proces = Popen(sadrzaj_komande[1], stdout=file_pointer,stderr=file_pointer, text= True, startupinfo=strt)
                     
                 return jsonify({"konzola": f'root_fold{user.trenutni_file[len(user.root_fold):]}>'})
@@ -139,7 +139,7 @@ def kodiranje():
         #provera da li je desktop ili mobile platforma - daje html shodno tome
         agent_korisnika = user_agent_parser.Parse(request.headers.get('User-Agent')) 
         if agent_korisnika["os"]["family"] in ["Windows","macos","Linux"]:
-            return render_template("coding_desktop.html", naslov =nas, konzolica = konzolica)
+            return render_template("coding_desktop.html",kdp = user.kod_povrsina, naslov =nas, konzolica = konzolica)
         elif agent_korisnika["os"]["family"] in ["Android","ios"]:            
             return render_template("coding_mobile.html",kdp = user.kod_povrsina, naslov =nas, konzolica = konzolica)
 
@@ -232,8 +232,8 @@ def menadzer():
                 if b == "white":                                  
                     user.kod_povrsina = procitaj_file(user.trenutni_file)                                            
                     user.fajlovi = ukloni_boje_svih_datoteka(user.fajlovi)
-                    user.fajlovi[user.index_trenutnog][0] = user.select_color                    
-                    return jsonify({"fajlovi": user.fajlovi,"trenutni_fajl": "root_fold" + user.trenutni_file[len(user.root_fold):], "prebaci": "da"})
+                    user.fajlovi[user.index_trenutnog][0] = user.select_color                                      
+                    return jsonify({"fajlovi": user.fajlovi,"trenutni_fajl": "root_fold" + user.trenutni_file[len(user.root_fold):], "prebaci": "da", "kodd": user.kod_povrsina})
                 else:
                     user.fajlovi[user.index_trenutnog][0] = "white"
                     user.kod_povrsina = ""   

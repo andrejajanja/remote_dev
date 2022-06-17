@@ -26,7 +26,7 @@ const glavna_forma_form = document.querySelector("#glavna");
 glavna_forma_form.addEventListener("submit", async function(e){  
     e.preventDefault();
     if(e.submitter.dataset.funkcija == "Login")
-    {                         
+    {                  
         let korisnicko_ime = glavna_forma_form.ime_korisnika.value
         let password_hash = enkriptuj(glavna_forma_form.prolazana_rec.value)                  
         let data = {login: "probaj" ,username: korisnicko_ime, password:password_hash};
@@ -37,7 +37,9 @@ glavna_forma_form.addEventListener("submit", async function(e){
         }
         else
         {
-            window.location.href = "https://janja.xyz/coding";
+            let lok = new URL(window.location.href);            
+            window.location.href = lok.protocol + "//"+ lok.host + "/coding"; 
+            //window.location.href = "https://janja.xyz/coding";
         }                
     }
 })
