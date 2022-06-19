@@ -1,4 +1,20 @@
+const lok = new URL(window.location.href);
+
+const url_code = lok.protocol+ "//" +lok.host+"/coding";
+const url_filesistem = lok.protocol+ "//" +lok.host+ "/file_explorer";
+
 //funkcije
+async function posalji_req_json(data, tip, url_str)
+{
+    const podaci = await fetch(url_str, {
+        method: tip,
+        body: new URLSearchParams(data)
+    })
+    .then((response) => response.json())
+    .then((pod) => {return pod;});
+    return podaci;
+}
+
 async function uzmi_elemente(){
     elementi = await posalji_req_json({"dinamicki_elememnti": "bilo_sta"}, "POST", url_filesistem) 
     napravi_dugmad(elementi)
@@ -12,17 +28,6 @@ function ekstenzija_od_imena(ime){
     i = ime.lastIndexOf(".")
     if (i==-1) {return "folder"}    
     return ime.substring(i+1)
-}
-
-async function posalji_req_json(data, tip, url_str)
-{
-    const podaci = await fetch(url_str, {
-        method: tip,
-        body: new URLSearchParams(data)
-    })
-    .then((response) => response.json())
-    .then((pod) => {return pod;});
-    return podaci;
 }
 
 function napravi_dugmad(elems){
@@ -113,28 +118,17 @@ async function preuzmi_fajl(){
     }
 }
 
-async function izvrsi_fajl(){
-    izvrsi_dugme.dataset.funkcija = "Zaustavi";
-    izvrsi_dugme.value = "Zaustavi";
-    izvrsava = true
-    odgovor = await posalji_req_json({kontrola: "izvrsi", sta: "py"},"POST", url_code);
-    if(odgovor["konzola"] == 0){
-        konzola.value = "Neophodan je ime_fajla.py file da biste ga izvrsili";
-        izvrsi_dugme.value = "Izvrši";
-        izvrsi_dugme.dataset.funkcija = "Izvrsi"             
-        return;
-    }                
+async function pokreni_proveravanje_konzole(odgovor){
+    izvrsava = true                     
     inicijalni_odgovor="";
     pom_konzola = "";
-
     if(jeste_konzola){
-        inicijalni_odgovor= konzola.value + odgovor["konzola"]
+        inicijalni_odgovor= konzola.value + odgovor["konzola"] + "\n"
         konzola.value = inicijalni_odgovor+ pom_konzola
         jeste_konzola=false
     }else{
-        inicijalni_odgovor= konzola.value
-    }
-                                    
+        inicijalni_odgovor= konzola.value + "\n"
+    }                                   
     while (izvrsava) {
         pom_konzola = await posalji_req_json({kontrola: "proveri_konzolu"}, "POST", url_code)
         if(!pom_konzola["nastavi"]){
@@ -143,17 +137,61 @@ async function izvrsi_fajl(){
         }
         konzola.value = inicijalni_odgovor+ pom_konzola["konzola"]
         await sleep(1000);
-    }
+    } 
 
     if (odgovor["konzola"]) {
         konzola.value += "\n" + odgovor["konzola"]    
     }
+    return;
+}
+
+async function izvrsi_fajl(){
+    izvrsi_dugme.dataset.funkcija = "Zaustavi";
+    izvrsi_dugme.value = "Zaustavi";
+
+    odgovor = await posalji_req_json({kontrola: "izvrsi", sta: "py"},"POST", url_code);
+    if(odgovor["konzola"] == 0){
+        konzola.value = "Neophodan je ime_fajla.py file da biste ga izvrsili";
+        izvrsi_dugme.value = "Izvrši";
+        izvrsi_dugme.dataset.funkcija = "Izvrsi"             
+        return;
+    }                
+
+    await pokreni_proveravanje_konzole(odgovor);
 
     izvrsi_dugme.value = "Izvrši";
     izvrsi_dugme.dataset.funkcija = "Izvrsi"
     izvrsava = false
-    var notifi = new Notification(title = "Zavvrseno izvrsavanje komande/skripte!", body = "Dodaj ovde koji se fajl izvrsio");
+    var notifi = new Notification(title = "Zavvrseno izvrsavanje komande/skripte!", body = "Dodaj ovde koji se fajl izvrsio");    
     return;
+}
+
+async function terminal_pokretanje(){
+    if (term.value == "Zaustavi") {
+        izvrsi_dugme.disabled = false;
+        izvrsava = false                    
+        term.value = "Terminal";
+        odgovor = await posalji_req_json({kontrola: "zaustavi"}, "POST", url_code)                                
+        return;
+    }
+
+    let komm = konzola.value.substring(konzo.length);
+    if(komm == ""){
+        alert("Morate uneti terminalnu komandu da bi ste je izvršili");
+        return;
+    }        
+    konzola.value += "\n";
+    term.value = "Zaustavi";                      
+    odgovor = await posalji_req_json({kontrola: "izvrsi", sta: komm}, "POST", url_code);                
+    izvrsi_dugme.disabled = true; 
+    await pokreni_proveravanje_konzole(odgovor);
+    izvrsava = false
+    izvrsi_dugme.disabled = false;        
+    term.value = "Terminal";
+    
+    konzo = konzola.value;
+    konzola.value = konzo
+    return; 
 }
 
 async function zaustavi_izvrsavanje(){
@@ -168,14 +206,9 @@ async function zaustavi_izvrsavanje(){
 //const url_code = "https://janja.xyz/coding";
 //const url_filesistem = "https://janja.xyz/file_explorer";
 
-const lok = new URL(window.location.href);
-
-const url_code = lok.protocol+ "//" +lok.host+"/coding";
-const url_filesistem = lok.protocol+ "//" +lok.host+ "/file_explorer";
-
 const forma_za_kodiranje = document.querySelector("#forma_kodiranje");
 const code_povrs = document.querySelector("#povrsina_kodiranje");
-const konzola =   document.getElementById("koznola_deo");
+const konzola = document.getElementById("koznola_deo");
 const sacuvaj_dugme = document.getElementById("sacu");
 const izvrsi_dugme = document.getElementById("izvr");
 const file_explorer_form = document.querySelector("#file_explorer");
@@ -185,7 +218,8 @@ const ime_fajla = document.querySelector("#file_ime_input");
 const kutija_za_dugmice = document.querySelector("#files_view");
 const forma_zaglavlje = document.querySelector("#zaglavlje");
 const file_loader = document.getElementById("file_loader");
-const slika_kont = document.getElementById("slika_kontejner")
+const slika_kont = document.getElementById("slika_kontejner");
+const term = document.getElementById("terminal_izvr");
 
 const eks_slika = ["jpg","png","jpeg","ico","bmp"]
 const eks_txt = ["py","pyw","txt","html","css","js","md","xml","csv"]
@@ -195,7 +229,13 @@ let inicijalni_odgovor="";
 let pom_konzola = "";
 let izvrsava = false;
 let notif = false;
-if (Notification.permission === "denied") {
+let konzo = "";
+
+if(code_povrs.value == "0"){
+    code_povrs.value = "Fajl sa ovom ekstenzijom se trenutno\nne može prikazati u pretraživaču.";
+}
+
+if (Notification.permission !== "granted") {
     Notification.requestPermission().then(function (permission) {
       // If the user accepts, let's create a notification
       if (permission === "granted") {
@@ -231,6 +271,10 @@ forma_za_kodiranje.addEventListener("submit", async function(e){
         konzola.value=""
         jeste_konzola = true        
     }
+
+    if(e.submitter.dataset.funkcija == "terminal"){ 
+        terminal_pokretanje();
+    }
 })
 
 forma_fajlovi.addEventListener("submit", async function(e){        
@@ -254,7 +298,7 @@ forma_fajlovi.addEventListener("submit", async function(e){
     if(e.submitter.dataset["vrednost"] == "posalji")
     {
         file_loader.click();
-    }
+    }    
 })
 
 //funckcija koja "otvara" fajl
@@ -336,8 +380,17 @@ window.addEventListener('keydown', async function (event) {
     if (event.altKey && event.code === 'KeyD'){
         preuzmi_fajl();
     }  
+    if (event.altKey && event.code === 'KeyT'){
+        terminal_pokretanje();
+    } 
     if(event.altKey && event.code === 'KeyB'){
         alert("PRECICE, ALT +:\n\n\tSacuvaj: S\n\tNovi fajl folder: N\n\tObrisi trenutni: O\n\tIzvrsi skriptu: i\n\tZaustavljanje skripte: Z\n\tSlanje file-a: P\n\tPreuzimanje trenutnog: D");
     }
 });
 //if (event.altKey && event.code === 'KeyS'){}  
+
+konzola.onkeyup = function(){
+    if(konzola.value.indexOf(konzo) === -1){
+        konzola.value = konzo
+    }
+};
