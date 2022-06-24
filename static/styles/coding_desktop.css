@@ -13,14 +13,17 @@ body{
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
+  border-radius: 2px;
 }
  
 ::-webkit-scrollbar-track {
   box-shadow: inset 0 0 6px rgb(0, 255, 76);
+  border-radius: 5px;
 }
  
 ::-webkit-scrollbar-thumb {
   background-color:  #71f171;
+  border-radius: 5px;
   /*outline: 1px solid slategrey;*/
 }
 
@@ -36,7 +39,7 @@ body{
 #cela_funkcionalna_povrs{
     display: flex;
     flex-direction: row;
-    height: 100%;
+    height: 95%;
     width: 100%;
 }
 
@@ -53,7 +56,7 @@ body{
     display: flex;
     flex-direction: row;
     width: 99%;
-    height: 50px;
+    height: 40px;
     align-items: center;
 }
 
@@ -91,12 +94,11 @@ body{
 }
 
 #preview_povrsina{
-    margin-left:1%;
-    margin-top:1%;
     width: var(--glavni_delovi-sirina);
-    height: 50%;
+    height: 52%;
     display:flex;
     flex-direction: row;
+    width: 100%;
 }
 #povrsina_kodiranje{
     height: 100%;
@@ -108,25 +110,13 @@ body{
     border-width: 2px;
     background: #6d6d6d;
     font-size: 120%;
-    color: white;
-    padding-top: 0.25%;      
-}
-
-#slika_kontejner{
-    display: none;
-    height: 100%;
-    width: 100%;    
-    align-content: flex-end;    
-    border-color: rgb(12, 82, 29);   
-    border-width: 2px;    
-    font-size: 120%;    
-    padding-top: 0.25%;
+    color: white;       
 }
 
 #prog_kontrole{        
     width: 96%;
     margin-left: 1%;
-    height: 5%;
+    height: 4%;
     display: block;
     margin-top: 0.25%;
     margin-bottom: 0.25%;
@@ -159,13 +149,14 @@ body{
     background-color:rgb(171, 248, 194);
 }
 #koznola_deo{
-    margin-left:1%;    
     width: var(--glavni_delovi-sirina);
-    background-color: #6d6d6d;
-    height: 40%;
+    background-color: #282a36 !important;
+    height: 44%;
     font-size: 120%;
     color: white;
     resize: none;
+    padding-left: 20px;
+    width: 100%;
 }
 
 
@@ -240,3 +231,77 @@ body{
     height: 30px;
     font-size:80%;
 }
+
+.CodeMirror {
+    height: 98% !important;
+    width: 100%;
+    border-top: 1px solid currentColor !important;
+    padding-top: 5px;
+    font-size: .9rem;    
+  }
+  
+  .CodeMirror-hints {
+    -webkit-box-shadow: 2px 3px 5px #454756;
+    -moz-box-shadow: 2px 3px 5px #454756;
+    box-shadow: 2px 3px 5px #454756;
+    border-radius: 3px;
+    border: 1px solid #2a2b31;
+    background: #31333f;
+  }
+  
+  /* .CodeMirror-hints::-webkit-scrollbar {
+    width: 0;
+  } */
+  
+  .CodeMirror-hint {
+    color: white;
+  }
+  
+  li.CodeMirror-hint-active {
+    background: rgb(69, 168, 255);
+    color: black;
+  }
+  
+  .CodeMirror-linenumber {
+    text-align: center;
+  }
+  
+  .cm-searching {
+    background-color: #9a9a9c;
+  }
+  
+  .CodeMirror-search-hint {
+    display: none;
+  }
+  
+  .CodeMirror-dialog-top {
+    margin-top: 10px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+  }
+  
+  .CodeMirror-dialog {
+    left: 50%;
+    width: 70%;
+    transform: translateX(-50%);
+  }
+  
+  #CodeMirror-search-field {
+    margin-left: 5px;
+    width: 70% !important;
+  }
+  
+  .CodeMirror-simplescroll-horizontal div, .CodeMirror-simplescroll-vertical div {
+    background: #454756;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .CodeMirror-simplescroll-horizontal, .CodeMirror-simplescroll-vertical {
+    background: #282a36;
+  }
+  
+  .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+    background-color: #2a2b31;
+  }

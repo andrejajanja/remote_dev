@@ -27,3 +27,12 @@ else if(eks_slika.includes(eks)){
     }
 
     uzmi_elemente();   
+
+//programske promenljive
+//const url_code = "https://janja.xyz/coding";
+//const url_filesistem = "https://janja.xyz/file_explorer";
+
+const eks_slika = ["jpg","png","jpeg","ico","bmp"]
+const eks_txt = ["py","pyw","txt","html","css","js","md","xml","csv"]
+
+jezici - 

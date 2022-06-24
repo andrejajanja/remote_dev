@@ -69,7 +69,7 @@ def kodiranje():
         '''
         komande = list(request.form.keys())
         sadrzaj_komande = list(request.form.values())
-        kljuc_korisnika = request.cookies["kluc_sesija"]
+        kljuc_korisnika = request.cookies["kluc_sesija"]        
         if "kontrola" in komande:
             if "zaustavi" in sadrzaj_komande:
                 
@@ -89,7 +89,7 @@ def kodiranje():
                     if ("tensorflow" and "model.fit(") in procitaj_file(user.trenutni_file): #da li treba da se koristi formater za TF
                         user.formatiranje = "tf"  
                         
-                    user.proces = Popen([lokacija_od_pythona, "-u", user.trenutni_file], stdout=file_pointer, cwd=user.root_fold)
+                    user.proces = Popen([lokacija_od_pythona, "-u", user.trenutni_file], stdout=file_pointer, cwd=user.root_fold, stderr = file_pointer)
                 else:
                     #grana u kojoj se izvrsava terminalna skripta                    
                     strt = STARTUPINFO()
@@ -114,14 +114,19 @@ def kodiranje():
                 else:                    
                     return jsonify({"konzola": user.konzola, "nastavi": True})                                
                             
-            if "sacuvaj" in sadrzaj_komande and "." in user.trenutni_file:                
-                try:
-                    user.kod_povrsina = request.form["code"]                            
-                    with open(user.trenutni_file,"w+", encoding="UTF-8") as f:                    
-                        f.write(user.kod_povrsina)
-                    return jsonify({"status": 1})
-                except:            
-                    return jsonify({"status": 0})
+            if "sacuvaj" in sadrzaj_komande:            
+                if "." in user.trenutni_file:                            
+                    try:
+                        user.kod_povrsina = request.form["code"]                            
+                        with open(user.trenutni_file,"w+") as f:                    
+                            f.write(user.kod_povrsina)
+                        return jsonify({"status": "Uspešno"})
+                    except:            
+                        return jsonify({"status": "Neuspešno"})
+                else:
+                    return jsonify({"status": "Nije otvoren fajl koji bi se mogao sačivati"})
+            
+            
                                     
         if "izloguj" in komande:            
             odgovor = make_response(jsonify({"poruka": "uspesno"}))            
@@ -304,7 +309,8 @@ if __name__=="__main__":
             format = ('[%(time)s] Metod: %(REQUEST_METHOD)s Status: %(status)s\tVelicina: %(bytes)s [bytes]\tTrazeno: %(REQUEST_URI)s')),
             host='0.0.0.0',
             port=5000, 
-            url_scheme = "https"
+            url_scheme = "https",
+                     
         )
 
         trag.shutdown()

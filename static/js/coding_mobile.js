@@ -107,14 +107,14 @@ glavna_forma_form.addEventListener("submit", async function(e){
             sacuvaj_dugme.value = "Uspesno"                                    
         }
         else{                    
-            sacuvaj_dugme.value = "Greska"
+            alert("Niste izabrali fajl/greška pri čuvanju");             
         }
         await sleep(1000);
         sacuvaj_dugme.disabled = false;
         sacuvaj_dugme.value = "Sačuvaj"
         return;
     }
-
+    
     if(e.submitter.dataset.funkcija == "ocisti"){
         konzola.value=""
         konzo = ""

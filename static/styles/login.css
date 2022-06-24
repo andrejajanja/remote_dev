@@ -40,7 +40,7 @@
     .polja_za_unosenje{
         width: 80%;
         height: 50%;
-        font-size: 250%;        
+        font-size: 150%;        
         border: 10px outset rgb(171, 248, 194);
         border-radius: 50px;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -131,7 +131,7 @@
     .polja_za_unosenje{
         width: 100%;
         height: 40%;
-        font-size: 300%;
+        font-size: 150%;
         border-width: 2px;
         border-radius: 10px;
         padding: 2%;
