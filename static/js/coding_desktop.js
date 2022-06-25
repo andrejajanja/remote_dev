@@ -271,6 +271,9 @@ function setNewLanguageModeOfEditor(newLanguage) {
     editor.setOption("mode", newLanguage)
 }
 
+const ucitaj_panel = document.getElementById("ucitavanje");
+ucitaj_panel.style.display = "none";
+
 //EVENT LISTENERS
 forma_za_kodiranje.addEventListener("submit", async function(e){   
     e.preventDefault();   

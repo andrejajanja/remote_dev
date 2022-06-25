@@ -5,74 +5,76 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">     
         <title>Remote_dev</title>
         
-        <link rel = "apple-touch-icon" sizes = "180x180" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">
-        <link rel = "icon" type = "image/png" sizes = "32x32" href = "{{ url_for('static',filename='images/ikonica_32x32.png') }}">
-        <link rel = "icon" type = "image/png" sizes = "16x16" href = "{{ url_for('static',filename='images/ikonica_16x16.png') }}">
-        <link rel = "mask-icon" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">
-        <link rel = "shortcut icon" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">                   
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/coding_desktop.css') }}"/>
+
+        <link defer rel = "apple-touch-icon" sizes = "180x180" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">
+        <link defer rel = "icon" type = "image/png" sizes = "32x32" href = "{{ url_for('static',filename='images/ikonica_32x32.png') }}">
+        <link defer rel = "mask-icon" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">
+        <link defer rel = "shortcut icon" href = "{{ url_for('static',filename='images/ikonica_128x128.png') }}">                   
         
         <!-- Code Mirror -->
         <!-- general -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='code_mrr/lib/codemirror.css') }}">
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/lib/codemirror.js') }}"></script>
+        <link defer rel="stylesheet" href="{{ url_for('static', filename='code_mrr/lib/codemirror.css') }}">
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/lib/codemirror.js') }}"></script>
         <!-- themes -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='code_mrr/theme/dracula.css') }}">
+        <link defer rel="stylesheet" href="{{ url_for('static', filename='code_mrr/theme/dracula.css') }}">
+        <link defer rel="stylesheet" href="{{ url_for('static', filename='code_mrr/theme/mdn-like.css') }}">
         <!-- language modes -->
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/mode/xml/xml.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/mode/css/css.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/mode/javascript/javascript.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/mode/python/python.js') }}"></script>
-
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/mode/xml/xml.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/mode/css/css.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/mode/javascript/javascript.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/mode/python/python.js') }}"></script>
         <!-- Addons -->
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/edit/closebrackets.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/edit/closetag.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/selection/active-line.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/wrap/hardwrap.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/edit/closebrackets.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/edit/closetag.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/selection/active-line.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/wrap/hardwrap.js') }}"></script>
         <!-- Hints -->
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/hint/show-hint.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/hint/html-hint.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/hint/css-hint.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/hint/javascript-hint.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/hint/anyword-hint.js') }}"></script>
-        <link rel="stylesheet" href="{{ url_for('static', filename='code_mrr/addon/hint/show-hint.css') }}">
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/hint/show-hint.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/hint/html-hint.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/hint/css-hint.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/hint/javascript-hint.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/hint/anyword-hint.js') }}"></script>
+        <link defer rel="stylesheet" href="{{ url_for('static', filename='code_mrr/addon/hint/show-hint.css') }}">
         <!-- Search bar -->
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/search/search.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/search/searchcursor.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/search/jump-to-line.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/dialog/dialog.js') }}"></script>
-        <link rel="stylesheet" href="{{ url_for('static', filename='code_mrr/addon/dialog/dialog.css') }}">
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/search/search.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/search/searchcursor.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/search/jump-to-line.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/dialog/dialog.js') }}"></script>
+        <link defer rel="stylesheet" href="{{ url_for('static', filename='code_mrr/addon/dialog/dialog.css') }}">
         <!-- Custom Scrollbars -->
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/scroll/simplescrollbars.js') }}"></script>
-        <link rel="stylesheet" href="{{ url_for('static', filename='code_mrr/addon/scroll/simplescrollbars.css') }}">
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/scroll/simplescrollbars.js') }}"></script>
+        <link defer rel="stylesheet" href="{{ url_for('static', filename='code_mrr/addon/scroll/simplescrollbars.css') }}">
         <!-- Lints -->
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/lint/css-lint.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/lint/javascript-lint.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/lint/lint.js') }}"></script>
-        <link rel="stylesheet" href="{{ url_for('static', filename='code_mrr/addon/lint/lint.css') }}">
-        <script type="text/javascript"  src="https://unpkg.com/jshint@2.13.2/dist/jshint.js"></script>
-        <script type="text/javascript"  src="https://unpkg.com/jsonlint@1.6.3/web/jsonlint.js"></script>
-        <script type="text/javascript"  src="https://unpkg.com/csslint@1.0.5/dist/csslint.js"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/lint/css-lint.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/lint/javascript-lint.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/lint/lint.js') }}"></script>
+        <link defer rel="stylesheet" href="{{ url_for('static', filename='code_mrr/addon/lint/lint.css') }}">
+        <script defer type="text/javascript" src="https://unpkg.com/jshint@2.13.2/dist/jshint.js"></script>
+        <script defer type="text/javascript" src="https://unpkg.com/jsonlint@1.6.3/web/jsonlint.js"></script>
+        <script defer type="text/javascript" src="https://unpkg.com/csslint@1.0.5/dist/csslint.js"></script>
         <!-- Folding -->
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/fold/foldcode.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/fold/brace-fold.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/fold/comment-fold.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/fold/foldgutter.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/fold/indent-fold.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/fold/markdown-fold.js') }}"></script>
-        <script type="text/javascript"  src="{{ url_for('static', filename='code_mrr/addon/fold/xml-fold.js') }}"></script>
-        <link rel="stylesheet" href="{{ url_for('static', filename='code_mrr/addon/fold/foldgutter.css') }}">
-        <!-- -------------------------------------------------------------------- -->        
-                
-        <script defer type="text/javascript" src="{{url_for('static', filename='js/coding_desktop.js')}}"></script> 
-        <link rel="stylesheet" type="text/css"  href="{{ url_for('static',filename='styles/coding_desktop.css') }}"/>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/fold/foldcode.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/fold/brace-fold.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/fold/comment-fold.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/fold/foldgutter.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/fold/indent-fold.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/fold/markdown-fold.js') }}"></script>
+        <script defer type="text/javascript" src="{{ url_for('static', filename='code_mrr/addon/fold/xml-fold.js') }}"></script>
+        <link defer rel="stylesheet" href="{{ url_for('static', filename='code_mrr/addon/fold/foldgutter.css') }}">
+        <!-- -------------------------------------------------------------------- -->                        
+        <script defer type="text/javascript" src="{{url_for('static', filename='js/coding_desktop.js')}}"></script>         
     </head>
     <body> 
+        <div id = "ucitavanje"></div>
+        
         <form id="zaglavlje">
             <div id="logo_div">
                 <h1 id="logo">Janja remote dev</h1>
             </div>
             <div id = "adresna_traka">{{konzolica}}</div>
-            <input id = "odjava" type="submit" name="kontrola" data-funkcija = "odjava" value="odjava"/>        
+            <input id = "odjava" type="submit" name="kontrola" data-funkcija = "odjava" value="odjava"/>    
+            <input id ="opcija" alt = "opcije" type = "image" name = "kontrola" src = "{{ url_for('static',filename='images/opcije.png') }}" data-funkcija="opcije" />    
         </form>
 
         <div id="cela_funkcionalna_povrs">
@@ -111,6 +113,10 @@
         <div id="footer_deo">
             <div id="footer_text">Andreja Janković, andrejajanja@gmail.com, April 2022.</div>
         </div>
-    </body>
-    
+
+        <div id = "opcije_panel">
+            
+
+        </div>
+    </body>    
 </html>
