@@ -74,7 +74,7 @@
             </div>
             <div id = "adresna_traka">{{konzolica}}</div>
             <input id = "odjava" type="submit" name="kontrola" data-funkcija = "odjava" value="odjava"/>    
-            <input id ="opcija" alt = "opcije" type = "image" name = "kontrola" src = "{{ url_for('static',filename='images/opcije.png') }}" data-funkcija="opcije" />    
+            <input id ="opcija" alt = "opcije" type = "image"  data-funkcija = "opcije"  name = "kontrola" src = "{{ url_for('static',filename='images/opcije.png') }}"/>    
         </form>
 
         <div id="cela_funkcionalna_povrs">
@@ -114,9 +114,33 @@
             <div id="footer_text">Andreja Janković, andrejajanja@gmail.com, April 2022.</div>
         </div>
 
-        <div id = "opcije_panel">
-            
+        <div id = "opcije_panel">            
+            <h1>OPCIJE</h1>
+            <div class = "opcije_element">
+                <p>Notifikacije</p>
+                <label class="switch">
+                    <input type="checkbox" id = "notfs" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class = "opcije_element">
+                <p>Tema</p>
+                <label class="switch">
+                    <input type="checkbox" id = "tema">
+                    <span class="slider"></span>
+                </label>
+            </div>
 
+            <div id = "preice_panel">
+                PRECICE, ALT +:<br><br>
+                    Sacuvaj: S<br>
+                    Novi fajl folder: N<br>
+                    Obrisi trenutni: O<br>
+                    Izvrsi skriptu: i<br>
+                    Zaustavljanje skripte: Z<br>
+                    Slanje file-a: P<br>
+                    Preuzimanje trenutnog: D<br>
+            </div>
         </div>
     </body>    
 </html>

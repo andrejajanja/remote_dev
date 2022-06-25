@@ -1,13 +1,20 @@
 *, html {
-    margin:0;
-    padding:0;  
+  margin:0;
+  padding:0;  
 }/**/
 
 body{
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  position: relative;
+  background-color: #282a36;
+}
+
+:root {
+  --glavni_delovi-sirina: 98%;
+  --boja_text: rgb(99, 99, 99);
+  --main_boja: #37804a;
 }
 
 #ucitavanje{
@@ -29,294 +36,390 @@ body{
   height: 10px;
   border-radius: 2px;
 }
- 
+
 ::-webkit-scrollbar-track {
   box-shadow: inset 0 0 6px rgb(0, 255, 76);
   border-radius: 5px;
 }
- 
+
 ::-webkit-scrollbar-thumb {
   background-color:  #71f171;
   border-radius: 5px;
-  /*outline: 1px solid slategrey;*/
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background-color:  #97FA97;
 }
 
-:root {
-    --glavni_delovi-sirina: 98%;
-}
-
-
 #cela_funkcionalna_povrs{
-    display: flex;
-    flex-direction: row;
-    height: 95%;
-    width: 100%;
+  display: flex;
+  flex-direction: row;
+  height: 95%;
+  width: 100%;
 }
 
 #kodiranje{
-    width:80%;
-    height: 100%;
+  width:80%;
+  height: 100%;
 }
 
 #zaglavlje {
-    background-color: rgb(171, 248, 194);
-    -webkit-background-clip: border-box;
-    background-clip: border-box;
-    font-family: 'Courier New', Courier, monospace;
-    padding-left: 1%;
-    display: flex;
-    flex-direction: row;
-    width: 99%;
-    height: 40px;
-    align-items: center;
+  background-color:  var(--main_boja);
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  font-family: 'Courier New', Courier, monospace;
+  padding-left: 1%;
+  display: flex;
+  flex-direction: row;
+  width: 99%;
+  height: 40px;
+  align-items: center;
 }
 
 #logo_div{
-    display:table;           
+  display:table;           
 }
 
 #logo {
-    text-align: left;
-    vertical-align: middle;
-    width: max-content;
-    line-height: 50px;
+  text-align: left;
+  vertical-align: middle;
+  width: max-content;
+  line-height: 50px;
 }
 
 #adresna_traka {
-    font-family: monospace;    
-    border: 1px solid black;
-    font-size: 2vh;
-    height: max-content;
-    margin-left: 1em;
-    padding: 0.3rem;
-    width: 500px;
-    overflow-x: auto;
+  font-family: monospace;    
+  border: 1px solid black;
+  font-size: 2vh;
+  height: max-content;
+  margin-left: 1em;
+  padding: 0.3rem;
+  width: 500px;
+  overflow-x: auto;
 }
 
 #odjava {
-    font-family: 'Courier New', Courier, monospace;
-    width: 13%;
-    font-size: 150%;
-    background-color: transparent;
-    border-width: 1px;
-    border-radius: 10px;
-    margin: auto;
-    cursor: pointer;
+  font-family: 'Courier New', Courier, monospace;
+  width: 13%;
+  font-size: 150%;
+  background-color: transparent;
+  border-width: 1px;
+  border-radius: 10px;
+  margin: auto;
+  cursor: pointer;
+}
+
+#opcija{
+  height: 100%;
+  margin-right: 5%;
 }
 
 #preview_povrsina{
-    width: var(--glavni_delovi-sirina);
-    height: 52%;
-    display:flex;
-    flex-direction: row;
-    width: 100%;
+  width: var(--glavni_delovi-sirina);
+  height: 52%;
+  display:flex;
+  flex-direction: row;
+  width: 100%;
 }
 #povrsina_kodiranje{
-    height: 100%;
-    width: 100%;
-    display:block;
-    align-content: flex-end;
-    resize: none;
-    border-color: rgb(12, 82, 29);   
-    border-width: 2px;
-    background: #6d6d6d;
-    font-size: 120%;
-    color: white;       
+  height: 100%;
+  width: 100%;
+  display:block;
+  align-content: flex-end;
+  resize: none;
+  border-color: rgb(12, 82, 29);   
+  border-width: 2px;
+  background: #6d6d6d;
+  font-size: 120%;
+  color: white;       
 }
 
 #prog_kontrole{        
-    width: 96%;
-    margin-left: 1%;
-    height: 4%;
-    display: block;
-    margin-top: 0.25%;
-    margin-bottom: 0.25%;
+  width: 96%;
+  margin-left: 1%;
+  height: 4%;
+  display: block;
+  margin-top: 0.25%;
+  margin-bottom: 0.25%;
+  background-color: #282a36;
 }
 .control_dugme{
-    width: 20%;        
-    font-size: 1.1em;
-    margin-right: 2%;
-    height: 100%;     
-    border-radius: 10px;        
-    font-family: 'Courier New', Courier, monospace;
-    cursor: pointer;
+  width: 20%;        
+  font-size: 1.1em;
+  margin-right: 2%;
+  height: 100%;     
+  border-radius: 10px;        
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
 }
 #ocisti_konzolu{
-    font-size: 1.1em;
+  font-size: 1.1em;
 }
 
 ::placeholder{
-    color:white;
-    font-size: 100%;
-    font-family: 'Courier New', Courier, monospace;
+  color:white;
+  font-size: 100%;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 #naslov_konzola{        
-    font-family: 'Courier New', Courier, monospace;
-    margin-left: 1%;
-    height: 3%;
-    font-size: 1.2em;    
-    width: var(--glavni_delovi-sirina);
-    background-color:rgb(171, 248, 194);
+  font-family: 'Courier New', Courier, monospace;
+  margin-left: 1%;
+  height: 3%;
+  font-size: 1.2em;    
+  width: var(--glavni_delovi-sirina);
+  background-color: var(--main_boja);
 }
 #koznola_deo{
-    width: var(--glavni_delovi-sirina);
-    background-color: #282a36 !important;
-    height: 44%;
-    font-size: 120%;
-    color: white;
-    resize: none;
-    padding-left: 20px;
-    width: 100%;
+  width: var(--glavni_delovi-sirina);
+  background-color: #282a36;
+  height: 44%;
+  font-size: 120%;
+  color: white;
+  resize: none;
+  padding-left: 20px;
+  width: 100%;
+  border-width: 0;
 }
 
 
 #footer_deo{
-    background-color: rgb(171, 248, 194);                               
-    width: 100%;
-    height: 7%;
-    margin-top: 1%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    
+  background-color:  var(--main_boja);                               
+  width: 100%;
+  height: 7%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
 }
 #footer_text{
-    width: 40%;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: large;
-    text-align: center;
+  width: 40%;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: large;
+  text-align: center;
 }
 
 #file_explorer_deo{
-    height: 100%;
-    width: 20%;
+  height: 100%;
+  width: 20%;
 }
 
 #forma_pravljenje_fajlovi{    
-    top: 0;
-    background-color: white;
-    width: 98%;
-    height: max-content;
-    display: flex;
-    flex-direction: column;
+  top: 0;
+  background-color: white;
+  width: 98%;
+  height: max-content;
+  display: flex;
+  flex-direction: column;
 }
 
 #file_kreator{        
-    width: 96%;
-    height: 70%;
-    margin: 2%;        
-    display: flex;
-    flex-direction: row;
-    border:rgb(171, 248, 194) solid 5px;
-    padding-top: 1%;
-    padding-bottom: 1%;
-    font-family: 'Courier New', Courier, monospace;
+  width: 96%;
+  height: 70%;
+  margin: 2%;        
+  display: flex;
+  flex-direction: row;
+  border: var(--main_boja) solid 5px;
+  padding-top: 1%;
+  padding-bottom: 1%;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .dugme_filesistem{
-    margin-left: 2%;  
-    width: 20%;                  
+  margin-left: 2%;  
+  width: 20%;                  
 }
 
 #file_loader{
-    display: none;
+  display: none;
 }
 
 #file_explorer{
-    height: 90%;
-    overflow-y: auto;
+  height: 90%;
+  overflow-y: auto;
 }
 
 #files_view{
-    display: flex;
-    flex-direction: column;
-    width: 96%;        
-    margin:2%;      
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 96%;        
+  margin:2%;      
+  box-sizing: border-box;
 }
 .file_folder{
-    width: 60%;
-    margin-top: 1%;    
-    height: 30px;
-    font-size:80%;
+  width: 60%;
+  margin-top: 1%;    
+  height: 30px;
+  font-size:80%;
 }
 
 .CodeMirror {
-    height: 98% !important;
-    width: 100%;
-    border-top: 1px solid currentColor !important;
-    padding-top: 5px;
-    font-size: .9rem;    
-  }
-  
-  .CodeMirror-hints {
-    -webkit-box-shadow: 2px 3px 5px #454756;
-    -moz-box-shadow: 2px 3px 5px #454756;
-    box-shadow: 2px 3px 5px #454756;
-    border-radius: 3px;
-    border: 1px solid #2a2b31;
-    background: #31333f;
-  }
-  
-  /* .CodeMirror-hints::-webkit-scrollbar {
-    width: 0;
-  } */
-  
-  .CodeMirror-hint {
-    color: white;
-  }
-  
-  li.CodeMirror-hint-active {
-    background: rgb(69, 168, 255);
-    color: black;
-  }
-  
-  .CodeMirror-linenumber {
-    text-align: center;
-  }
-  
-  .cm-searching {
-    background-color: #9a9a9c;
-  }
-  
-  .CodeMirror-search-hint {
-    display: none;
-  }
-  
-  .CodeMirror-dialog-top {
-    margin-top: 10px;
-    padding: 10px 15px;
-    border-radius: 10px;
-    border: 1px solid #eee;
-  }
-  
-  .CodeMirror-dialog {
-    left: 50%;
-    width: 70%;
-    transform: translateX(-50%);
-  }
-  
-  #CodeMirror-search-field {
-    margin-left: 5px;
-    width: 70% !important;
-  }
-  
-  .CodeMirror-simplescroll-horizontal div, .CodeMirror-simplescroll-vertical div {
-    background: #454756;
-    border: none;
-    border-radius: 5px;
-  }
-  
-  .CodeMirror-simplescroll-horizontal, .CodeMirror-simplescroll-vertical {
-    background: #282a36;
-  }
-  
-  .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
-    background-color: #2a2b31;
-  }
+  height: 98% !important;
+  width: 100%;
+  border-top: 1px solid currentColor !important;
+  padding-top: 5px;
+  font-size: .9rem;    
+}
+
+.CodeMirror-hints {
+  -webkit-box-shadow: 2px 3px 5px #454756;
+  -moz-box-shadow: 2px 3px 5px #454756;
+  box-shadow: 2px 3px 5px #454756;
+  border-radius: 3px;
+  border: 1px solid #2a2b31;
+  background: #31333f;
+}
+
+.CodeMirror-hint {
+  color: white;
+}
+
+li.CodeMirror-hint-active {
+  background: rgb(69, 168, 255);
+  color: black;
+}
+
+.CodeMirror-linenumber {
+  text-align: center;
+}
+
+.cm-searching {
+  background-color: #9a9a9c;
+}
+
+.CodeMirror-search-hint {
+  display: none;
+}
+
+.CodeMirror-dialog-top {
+  margin-top: 10px;
+  padding: 10px 15px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+.CodeMirror-dialog {
+  left: 50%;
+  width: 70%;
+  transform: translateX(-50%);
+}
+
+#CodeMirror-search-field {
+  margin-left: 5px;
+  width: 70% !important;
+}
+
+.CodeMirror-simplescroll-horizontal div, .CodeMirror-simplescroll-vertical div {
+  background: #454756;
+  border: none;
+  border-radius: 5px;
+}
+
+.CodeMirror-simplescroll-horizontal, .CodeMirror-simplescroll-vertical {
+  background: #282a36;
+}
+
+.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+  background-color: #2a2b31;
+}
+
+
+/*CSS KOJI SE TICE CELOG PANELA SA OPCIJAMA*/
+
+#opcije_panel {
+  align-items: center;  
+  position: absolute;
+  left: 0;
+  top: -100%;
+  z-index: 100;
+  height: calc(100vh - 40px);
+  width: 99.3vw;
+  background-color: rgba(171, 248, 194,0.95);
+  display: flex;
+  flex-direction: column;  
+}
+
+#opcije_panel h1{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--boja_text);
+  margin-top: 3%;
+  margin-bottom: 3%;
+}
+
+.opcije_element {   
+  margin-bottom: 2%; 
+  display: flex; 
+  flex-direction: row;  
+}
+
+.opcije_element p{
+  margin-right: 15%; 
+  border-bottom: 3px dashed #047a39;
+  border-right: 3px dashed #047a39;
+  text-align: center;  
+  font-size: 170%;
+  height: 50px;
+  width: 200px;    
+  color: var(--boja_text); 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.switch {    
+  position: relative;
+  display: inline-block;
+  width: 71px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgb(87, 87, 87);
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .2s;
+  transition: .2s;
+  border-radius: 30px;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+#preice_panel{
+  color: var(--boja_text);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 150%;
+}

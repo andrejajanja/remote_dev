@@ -21,7 +21,7 @@ serverski_path = os.getcwd()
 lokacija_od_pythona = f"{os.path.dirname(sys.executable)}\{os.path.basename(sys.executable)}"
 app.config['MAX_CONTENT_LENGTH'] = 100000000 #100MB mu je max upload size, mora da se namesti limit i na nginx-u
 #endregion serverske promenljive
-jeste_debug = False
+jeste_debug = True
 #rt = r"C:\python_projekti\remote_dev"
 rt = r'C:\\Artificial_Inteligence\\uho'
 nalog = ["",'Andreja', '92bffb0826ab25ce7877d6d1bd4a42f4', rt, 'rgb(171, 248, 194)']
@@ -70,10 +70,10 @@ def kodiranje():
         sadrzaj_komande = list(request.form.values())
         kljuc_korisnika = request.cookies["kluc_sesija"]        
         if "kontrola" in komande:
-            if "zaustavi" in sadrzaj_komande:
-                
+            if "zaustavi" in sadrzaj_komande:                
                 user.proces.terminate()                
                 file_pointer.close()                
+                os.remove(f"{serverski_path}/{kljuc_korisnika}.txt")
                 return jsonify({"rezultat": "uspesno"})
 
             if "izvrsi" in sadrzaj_komande:                                                                                           
@@ -92,8 +92,13 @@ def kodiranje():
                 else:
                     #grana u kojoj se izvrsava terminalna skripta                    
                     strt = STARTUPINFO()
-                    strt.dwFlags |= STARTF_USESHOWWINDOW                    
-                    user.proces = Popen(sadrzaj_komande[1], stdout=file_pointer,stderr=file_pointer, text= True, startupinfo=strt)
+                    strt.dwFlags |= STARTF_USESHOWWINDOW  
+                    try:                  
+                        user.proces = Popen(sadrzaj_komande[1], stdout=file_pointer,stderr=file_pointer, text= True, startupinfo=strt)
+                    except:
+                        file_pointer.close()
+                        os.remove(f"{serverski_path}/{kljuc_korisnika}.txt")
+                        return jsonify({"konzola": 0})
                     
                 return jsonify({"konzola": f'root_fold{user.trenutni_file[len(user.root_fold):]}>'})
 
