@@ -16,14 +16,14 @@ trag = SysTrayIcon("static/images/ikonica.ico", "Remote_dev", on_quit=ugasi_prog
 
 #region serverske promenljive
 app = Flask(__name__)
-vreme_kolacic = 3600#s traju kolacici na sajtu
+vreme_kolacic = 3600*24#s traju kolacici na sajtu
 serverski_path = os.getcwd()
 lokacija_od_pythona = f"{os.path.dirname(sys.executable)}\{os.path.basename(sys.executable)}"
 app.config['MAX_CONTENT_LENGTH'] = 100000000 #100MB mu je max upload size, mora da se namesti limit i na nginx-u
 #endregion serverske promenljive
-jeste_debug = True
+jeste_debug = False
 #rt = r"C:\python_projekti\remote_dev"
-rt = r'C:\\Artificial_Inteligence\\uho'
+rt = r'C:\Artificial_Inteligence\bata_ai'
 nalog = ["",'Andreja', '92bffb0826ab25ce7877d6d1bd4a42f4', rt, 'rgb(171, 248, 194)']
 kljuc_korisnika = ""
 user = korisnik(nalog)

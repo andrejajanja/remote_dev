@@ -41,6 +41,7 @@ def procitaj_file_tf_format(file_path: str):
     return txt
 
 def procitaj_file(file_path: str):
+    
     eks = file_path[file_path.rindex(".")+1:]    
     eks_slika = ["jpg","png","jpeg","ico","bmp"]
     eks_txt = ["py","pyw","txt","html","css","js","md","xml","csv"]
@@ -57,7 +58,25 @@ def procitaj_file(file_path: str):
         return base64.b64encode(file)
     return 0
    
-def lista_u_string(lista, dodatak:str):
+def lista_u_string(lista, dodatak:str) -> str:
+    '''
+    Description:
+    ------
+    Pretvara celu listu u jedan veliki string
+    
+    Input params:
+    ------
+    lista : list
+        lista parsiabilnih objekata
+    dodatak: str
+        ono sto se dodaje na svaki parsirani element liste
+    
+    Output:
+    ------
+    pom : str
+        string sacinjen od svih elemenata liste
+    
+    '''
     pom = ""
     for x in lista:
         pom+=f"{x}{dodatak}"
