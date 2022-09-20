@@ -1,5 +1,4 @@
 const lok = new URL(window.location.href);
-
 const url_code = lok.protocol+ "//" +lok.host+"/coding";
 const url_filesistem = lok.protocol+ "//" +lok.host+ "/file_explorer";
 
@@ -40,10 +39,13 @@ function napravi_dugmad(elems){
         input.name = "lok";
         input.dataset['put'] = dugme[2];
         input.value = dugme[1];
-        input.style.backgroundColor = dugme[0];
-        input.style.marginLeft = dugme[3]*7 + "%";            
+        input.style.paddingLeft = dugme[3]*7 + 5 + "%";            
         input.className="file_folder";
         kutija_za_dugmice.appendChild(input);            
+
+        if(dugme[0] !== "white"){
+            input.style.backgroundColor = "var(--dugme_hover)";
+        }
     });
     adres_traka.textContent = elems["trenutni_fajl"]
 }
@@ -166,7 +168,9 @@ async function izvrsi_fajl(){
     izvrsi_dugme.dataset.funkcija = "Izvrsi"
     izvrsava = false
     konzo = konzola.value;
-    var notifi = new Notification(title = "Zavšeno izvrsavanje komande/skripte!");  
+    if(notif){
+        var notifi = new Notification(title = "Zavšeno izvršavanje skripte", {icon: lok.origin + "/static/images/ikonica_128x128.png"});
+    }
     return;
 }
 
@@ -202,6 +206,11 @@ async function terminal_pokretanje(){
     
     konzo = konzola.value;
     konzola.value = konzo
+
+    if(notif){
+        var notifi = new Notification(title = "Zavšeno izvršavanje terminalne komande", {icon: lok.origin + "/static/images/ikonica_128x128.png"});
+    }
+
     return; 
 }
 
@@ -211,6 +220,23 @@ async function zaustavi_izvrsavanje(){
     izvrsi_dugme.value = "Izvrši";
     izvrsi_dugme.dataset.funkcija = "Izvrsi"    
     return;
+}
+
+async function klikni_opcije(){
+    if(!ukljucene_opcije){
+        opcije.animate([{transform: "translateY(-100%)"}, {transform: "translateY(35px)"}],{duration: brzina_animacije, iterations: 1});     
+        opcije.style.top = "50px";            
+        opcije.classList.toggle("active");
+        opcije_btn.animate([{transform: "rotate(0deg)"}, {transform: "rotate(180deg)"}],{duration: brzina_animacije, iterations: 1});        
+    }else{            
+        opcije_btn.animate([{transform: "rotate(180deg)"}, {transform: "rotate(0deg)"}],{duration: brzina_animacije, iterations: 1});            
+        opcije.animate([{transform: "translateY(40px)"}, {transform: "translateY(-100%)"}],{duration: brzina_animacije, iterations: 1});
+        await sleep(brzina_animacije - 50);
+        opcije.style.top = "-100%";
+        opcije.classList.toggle("active");
+        
+    }
+    ukljucene_opcije = !ukljucene_opcije   
 }
 
 const forma_za_kodiranje = document.querySelector("#forma_kodiranje");
@@ -235,11 +261,12 @@ let jeste_konzola = true
 let inicijalni_odgovor="";
 let pom_konzola = "";
 let izvrsava = false;
-let notif = true;
+let notif = false;
 let konzo = "";
 let eks = "";
 let ukljucene_opcije = false;
 let brzina_animacije = 250;
+let kod_konzola = true
 
 if(code_povrs.value == "0"){ code_povrs.value = "Fajl sa ovom ekstenzijom se trenutno\nne može prikazati u pretraživaču."; }
 
@@ -340,7 +367,7 @@ forma_fajlovi.addEventListener("submit", async function(e){
     }    
 })
 
-//funckcija koja "otvara" fajl
+//funckcija koja otvara fajl
 file_explorer_form.addEventListener('submit', async function(e){
     e.preventDefault();
     eks = ekstenzija_od_imena(e.submitter.dataset["put"])    
@@ -350,12 +377,15 @@ file_explorer_form.addEventListener('submit', async function(e){
         napravi_dugmad(odgovor)
         return;
     }
+
     let odgovor = await fetch(url_filesistem, {method: "POST",body: new URLSearchParams({lokacija: e.submitter.dataset['put']})
     })
-    .then((response) => {return response.json()})                    
-    editor.getDoc().setValue(odgovor["kodd"]);    
-    if(code_povrs.value == "0"){
-        code_povrs.value = "Fajl sa ovom ekstenzijom se trenutno\nne može prikazati u pretraživaču.";
+    .then((response) => {return response.json()})  
+    
+    if(odgovor["kodd"] === 0){        
+        editor.getDoc().setValue("Fajl sa ovom ekstenzijom se trenutno\nne može prikazati u pretraživaču.");
+    }else{
+        editor.getDoc().setValue(odgovor["kodd"]);
     }
     
     if(eks == "py"){eks = "python";}
@@ -373,17 +403,7 @@ forma_zaglavlje.addEventListener("submit", async function(e){
     }
 
     if(e.submitter.dataset.funkcija == "opcije"){
-        if(!ukljucene_opcije){
-            opcije.animate([{transform: "translateY(-100%)"}, {transform: "translateY(35px)"}],{duration: brzina_animacije, iterations: 1})            
-            opcije.style.top = "40px";
-            opcije_btn.animate([{transform: "rotate(0deg)"}, {transform: "rotate(180deg)"}],{duration: brzina_animacije, iterations: 1})            
-        }else{            
-            opcije_btn.animate([{transform: "rotate(180deg)"}, {transform: "rotate(0deg)"}],{duration: brzina_animacije, iterations: 1})
-            opcije.animate([{transform: "translateY(40px)"}, {transform: "translateY(-100%)"}],{duration: brzina_animacije, iterations: 1})
-            await sleep(brzina_animacije - 50);
-            opcije.style.top = "-100%";
-        }
-        ukljucene_opcije = !ukljucene_opcije        
+        klikni_opcije()     
     }
 })
 
@@ -427,6 +447,10 @@ tema.addEventListener('change', (event) => {
         document.getElementById("prog_kontrole").style.backgroundColor = "white";
         document.body.style.backgroundColor = "white";
         ceo_stil.style.setProperty('--main_boja', 'rgb(171, 248, 194)');
+        ceo_stil.style.setProperty('--boja_font_fajl_folder', 'black');
+        ceo_stil.style.setProperty('--background_color_file_folder', 'white');
+        ceo_stil.style.setProperty('--dugme_hover', 'rgb(196, 196, 196)');
+        ceo_stil.style.setProperty('--invert_slike', '0');
     } else {
         editor.setOption("theme","dracula")
         konzola.style.backgroundColor = "#282a36";
@@ -434,7 +458,11 @@ tema.addEventListener('change', (event) => {
         konzola.style.color = "white";
         document.getElementById("prog_kontrole").style.backgroundColor = "#282a36";
         document.body.style.backgroundColor = "#282a36";
+        ceo_stil.style.setProperty('--boja_font_fajl_folder', 'white');
         ceo_stil.style.setProperty('--main_boja', '#37804a');
+        ceo_stil.style.setProperty('--background_color_file_folder', '#282a36');
+        ceo_stil.style.setProperty('--dugme_hover', '#44454b');
+        ceo_stil.style.setProperty('--invert_slike', '0.95');
     }
 })
 
@@ -445,8 +473,8 @@ konzola.onkeyup = function(){
 };
 
 //precice za koriscenje web stranice
-window.addEventListener('keydown', async function (event) {    
-    if (event.altKey && event.code === 'KeyS') {        
+window.addEventListener('keydown', async function (event) {   
+    if (event.altKey && event.code === 'Semicolon') {   
         sacuvaj_fajl();
     }
     if (event.altKey && event.code === 'KeyN'){        
@@ -470,5 +498,19 @@ window.addEventListener('keydown', async function (event) {
     if (event.altKey && event.code === 'KeyT'){
         terminal_pokretanje();
     }     
+
+    if (event.altKey && event.code === 'KeyH'){
+        klikni_opcije()
+    }
+
+    if (event.altKey && event.code === 'Backquote'){
+        if(kod_konzola){
+            konzola.focus()
+        }else{
+            editor.focus()
+        }
+
+        kod_konzola = !kod_konzola
+    }
 });
 //if (event.altKey && event.code === 'KeyS'){}  

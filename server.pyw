@@ -94,7 +94,7 @@ def kodiranje():
                     strt = STARTUPINFO()
                     strt.dwFlags |= STARTF_USESHOWWINDOW  
                     try:                  
-                        user.proces = Popen(sadrzaj_komande[1], stdout=file_pointer,stderr=file_pointer, text= True, startupinfo=strt)
+                        user.proces = Popen(sadrzaj_komande[1], stdout=file_pointer,stderr=file_pointer, text= True, startupinfo=strt, cwd=rt)
                     except:
                         file_pointer.close()
                         os.remove(f"{serverski_path}/{kljuc_korisnika}.txt")

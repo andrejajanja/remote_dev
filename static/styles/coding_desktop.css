@@ -15,6 +15,10 @@ body{
   --glavni_delovi-sirina: 98%;
   --boja_text: rgb(99, 99, 99);
   --main_boja: #37804a;
+  --boja_font_fajl_folder: white;
+  --background_color_file_folder: #282a36;
+  --dugme_hover: #44454b;
+  --invert_slike: 0.95;
 }
 
 #ucitavanje{
@@ -24,8 +28,8 @@ body{
   left: 0;
   z-index: 100;
   width: 100vw;
-  height: 100vh;
-  background-color: #000;
+  height: 106.5vh;
+  background-color: #000000;
   background-image: url("/static/images/ucitavanje.gif");
   background-repeat: no-repeat;
   background-position: center, center;
@@ -64,15 +68,15 @@ body{
 }
 
 #zaglavlje {
-  background-color:  var(--main_boja);
+  background-color: var(--main_boja);
   -webkit-background-clip: border-box;
   background-clip: border-box;
   font-family: 'Courier New', Courier, monospace;
   padding-left: 1%;
   display: flex;
   flex-direction: row;
-  width: 99%;
-  height: 40px;
+  width: 100%;
+  height: 50px;
   align-items: center;
 }
 
@@ -92,6 +96,7 @@ body{
   border: 1px solid black;
   font-size: 2vh;
   height: max-content;
+  color: var(--boja_font_fajl_folder);
   margin-left: 1em;
   padding: 0.3rem;
   width: 500px;
@@ -105,8 +110,13 @@ body{
   background-color: transparent;
   border-width: 1px;
   border-radius: 10px;
+  color: var(--boja_font_fajl_folder);
   margin: auto;
   cursor: pointer;
+}
+
+#odjava:hover{
+  background-color: var(--dugme_hover);
 }
 
 #opcija{
@@ -148,9 +158,16 @@ body{
   font-size: 1.1em;
   margin-right: 2%;
   height: 100%;     
+  border: 1px solid;
   border-radius: 10px;        
+  background-color: var(--background_color_file_folder);
+  color: var(--boja_font_fajl_folder);
   font-family: 'Courier New', Courier, monospace;
   cursor: pointer;
+}
+
+.control_dugme:hover{   
+  background-color: var(--dugme_hover);
 }
 #ocisti_konzolu{
   font-size: 1.1em;
@@ -203,12 +220,13 @@ body{
 #file_explorer_deo{
   height: 100%;
   width: 20%;
+  border-left: 3px solid var(--main_boja);
 }
 
 #forma_pravljenje_fajlovi{    
   top: 0;
   background-color: white;
-  width: 98%;
+  width: 100%;
   height: max-content;
   display: flex;
   flex-direction: column;
@@ -216,19 +234,20 @@ body{
 
 #file_kreator{        
   width: 96%;
-  height: 70%;
-  margin: 2%;        
+  height: 70%;  
   display: flex;
   flex-direction: row;
-  border: var(--main_boja) solid 5px;
-  padding-top: 1%;
-  padding-bottom: 1%;
+  border: var(--main_boja) ridge 5px;
+  background-color: var(--background_color_file_folder);
+  padding-top: 2%;
+  padding-bottom: 2%;
   font-family: 'Courier New', Courier, monospace;
 }
 
 .dugme_filesistem{
   margin-left: 2%;  
   width: 20%;                  
+  filter: invert(var(--invert_slike));
 }
 
 #file_loader{
@@ -251,7 +270,17 @@ body{
   width: 60%;
   margin-top: 1%;    
   height: 30px;
+  width: 100%;
   font-size:80%;
+  border: transparent;
+  text-align: left;
+  background-color: var(--background_color_file_folder);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--boja_font_fajl_folder);
+}
+
+.file_folder:hover{
+  background-color: var(--dugme_hover);
 }
 
 .CodeMirror {
@@ -327,17 +356,24 @@ li.CodeMirror-hint-active {
 
 /*CSS KOJI SE TICE CELOG PANELA SA OPCIJAMA*/
 
-#opcije_panel {
+.opcije_panel_klasa{
   align-items: center;  
   position: absolute;
   left: 0;
   top: -100%;
   z-index: 100;
-  height: calc(100vh - 40px);
+  height: calc(100vh - 56px);
   width: 99.3vw;
-  background-color: rgba(171, 248, 194,0.95);
+  background-color: rgba(151, 211, 169, 0.95);
   display: flex;
+  opacity: 0;
+  transition: opacity 0.25s cubic-bezier(1, 0, 0.58, 1);
   flex-direction: column;  
+}
+
+.opcije_panel_klasa.active {
+  opacity: 1;
+  transition: opacity 0.25s ease-in-out;
 }
 
 #opcije_panel h1{
