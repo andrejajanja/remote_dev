@@ -14,6 +14,26 @@ def ugasi_program(systray):
 trag = SysTrayIcon("static/images/ikonica.ico", "Remote_dev", on_quit=ugasi_program)
 #endregion tray ikonica
 
+#region p2p
+
+def update_txt():
+    global adresar
+
+    pom = ""
+    for x in adresar.keys():
+        pom += f"{x}|{adresar[x]}\n"
+
+    with open("registar.txt", "w") as f:
+        f.write(pom)
+
+#ovaj registar.txt se mora zameniti nekom bazom podataka sa recnicima
+adresar = {}
+with open("registar.txt", "r") as f:
+    for lin in f.readlines():
+        ime, adresa = lin.split("|")
+        adresar[ime] = adresa[:-1]
+#endregion p2p
+
 #region serverske promenljive
 app = Flask(__name__)
 vreme_kolacic = 3600*24#s traju kolacici na sajtu
@@ -293,7 +313,29 @@ def menadzer():
         #provera da li je desktop ili mobile platforma
         if agent_korisnika["os"]["family"] in ["Windows","macos","Linux"]:
             return redirect("/coding")        
-        return make_response(render_template("file_manager.html"))                 
+        return make_response(render_template("file_manager.html"))
+
+@app.route("/adresa", methods=["GET","POST"])
+def zabelezavanje():
+    global adresar
+
+    if request.method == "GET":
+        try:
+            adr = adresar[request.args["ime"]]
+        except:
+            adr = "nema"
+        return jsonify({"adresa": adr})
+
+    if request.method == "POST":
+        try:
+            ime = request.args["ime"]
+            adr = request.args["adresa"]        
+            adresar[ime] = adr
+            update_txt()
+            st = "uspesno"
+        except:
+            st = "neuspesno"
+        return jsonify({"status": st})        
         
 #error 404 handling
 @app.errorhandler(404)
