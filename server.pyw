@@ -1,11 +1,46 @@
-from flask import Flask, jsonify, redirect,request, render_template,make_response, send_file
-import os,shutil,sys
-from waitress import serve
-from paste.translogger import TransLogger  
-from subprocess import Popen, STARTUPINFO, STARTF_USESHOWWINDOW
-from ua_parser import user_agent_parser
-from infi.systray import SysTrayIcon
-from lib import *
+from flask import Flask, jsonify, redirect,request, render_template,make_response, send_file; import os,shutil,sys, socket, threading, requests;
+from waitress import serve; from paste.translogger import TransLogger; from subprocess import Popen, STARTUPINFO, STARTF_USESHOWWINDOW
+from ua_parser import user_agent_parser; from infi.systray import SysTrayIcon; from lib import *
+
+javni_ip_servera = requests.get('https://api.ipify.org').content.decode('utf8')
+
+
+#ovo je zapravo stun komponenta
+def udp_prima():
+    global adresar
+    socke = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    socke.bind(("192.168.0.10", 3478))
+    while True:
+        poruka, lokacija = socke.recvfrom(1024)
+        parametri = poruka.decode().split("|")
+
+        if parametri[0] == "update":
+            if adresar.get(parametri[1]) == None:
+                adresar[parametri[1]] = uredjaj(lokacija[0])
+                adresar[parametri[1]].lport(lokacija[1])
+                update_txt() #sredi da ovo bude pristup redis bazi podataka    
+            else:
+                adresar[parametri[1]].sport(lokacija[1])                
+                update_txt() #sredi da ovo bude pristup redis bazi podataka  
+
+
+nit = threading.Thread(target=udp_prima, daemon=True)
+nit.start()
+
+class uredjaj:
+    def __init__(self, adresa) -> None:
+        self.adrr = adresa
+        self.lp = "-1"
+        self.sp = "-1"        
+
+    def lport(self,lport):
+        self.lp= lport
+    
+    def sport(self,sport):
+        self.sp = sport
+
+    def __str__(self) -> str:
+        return f"{self.adrr}|{self.lp}|{self.sp}"
 
 #region tray ikonica
 def ugasi_program(systray):
@@ -18,11 +53,9 @@ trag = SysTrayIcon("static/images/ikonica.ico", "Remote_dev", on_quit=ugasi_prog
 
 def update_txt():
     global adresar
-
     pom = ""
     for x in adresar.keys():
         pom += f"{x}|{adresar[x]}\n"
-
     with open("registar.txt", "w") as f:
         f.write(pom)
 
@@ -30,8 +63,10 @@ def update_txt():
 adresar = {}
 with open("registar.txt", "r") as f:
     for lin in f.readlines():
-        ime, adresa = lin.split("|")
-        adresar[ime] = adresa[:-1]
+        ime, adresa,lport,sport = lin.split("|")
+        adresar[ime] = uredjaj(adresa)
+        adresar[ime].lport(lport)
+        adresar[ime].sport(sport)
 #endregion p2p
 
 #region serverske promenljive
@@ -66,7 +101,7 @@ def login():
             else:
                 return jsonify({"autentifikacija":"neuspesna"})
             
-    if request.method == "GET":
+    if request.method == "GET":        
         if "kluc_sesija" in request.cookies.keys():            
             if request.cookies["kluc_sesija"] == kljuc_korisnika:
                 return redirect("/coding")
@@ -171,8 +206,7 @@ def kodiranje():
             return render_template("coding_desktop.html",kdp = user.kod_povrsina, naslov =nas, konzolica = konzolica)
         elif agent_korisnika["os"]["family"] in ["Android","ios"]:            
             return render_template("coding_mobile.html",kdp = user.kod_povrsina, naslov =nas, konzolica = konzolica)
-
-        #pravljenje odgovora                            
+    #pravljenje odgovora                            
             
 @app.route('/file_explorer', methods=["GET","POST", "PUT"])
 def menadzer():
@@ -315,6 +349,8 @@ def menadzer():
             return redirect("/coding")        
         return make_response(render_template("file_manager.html"))
 
+
+#sredi ovaj STUN server deo
 @app.route("/adresa", methods=["GET","POST"])
 def zabelezavanje():
     global adresar
@@ -324,18 +360,13 @@ def zabelezavanje():
             adr = adresar[request.args["ime"]]
         except:
             adr = "nema"
-        return jsonify({"adresa": adr})
 
-    if request.method == "POST":
-        try:
-            ime = request.args["ime"]
-            adr = request.args["adresa"]        
-            adresar[ime] = adr
-            update_txt()
-            st = "uspesno"
-        except:
-            st = "neuspesno"
-        return jsonify({"status": st})        
+        return jsonify({"adresa": str(adr)})
+
+@app.route("/javna_adresa", methods=["GET"])
+def javna_ip():
+    global javni_ip_servera
+    return f"{javni_ip_servera}"
         
 #error 404 handling
 @app.errorhandler(404)
@@ -355,8 +386,7 @@ if __name__=="__main__":
             format = ('[%(time)s] Metod: %(REQUEST_METHOD)s Status: %(status)s\tVelicina: %(bytes)s [bytes]\tTrazeno: %(REQUEST_URI)s')),
             host='0.0.0.0',
             port=5000, 
-            url_scheme = "https",
-                     
+            url_scheme = "https"                     
         )
 
         trag.shutdown()
