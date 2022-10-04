@@ -1,46 +1,6 @@
-from flask import Flask, jsonify, redirect,request, render_template,make_response, send_file; import os,shutil,sys, socket, threading, requests;
-from waitress import serve; from paste.translogger import TransLogger; from subprocess import Popen, STARTUPINFO, STARTF_USESHOWWINDOW
-from ua_parser import user_agent_parser; from infi.systray import SysTrayIcon; from lib import *
-
-javni_ip_servera = requests.get('https://api.ipify.org').content.decode('utf8')
-
-
-#ovo je zapravo stun komponenta
-def udp_prima():
-    global adresar
-    socke = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    socke.bind(("192.168.0.10", 3478))
-    while True:
-        poruka, lokacija = socke.recvfrom(1024)
-        parametri = poruka.decode().split("|")
-
-        if parametri[0] == "update":
-            if adresar.get(parametri[1]) == None:
-                adresar[parametri[1]] = uredjaj(lokacija[0])
-                adresar[parametri[1]].lport(lokacija[1])
-                update_txt() #sredi da ovo bude pristup redis bazi podataka    
-            else:
-                adresar[parametri[1]].sport(lokacija[1])                
-                update_txt() #sredi da ovo bude pristup redis bazi podataka  
-
-
-nit = threading.Thread(target=udp_prima, daemon=True)
-nit.start()
-
-class uredjaj:
-    def __init__(self, adresa) -> None:
-        self.adrr = adresa
-        self.lp = "-1"
-        self.sp = "-1"        
-
-    def lport(self,lport):
-        self.lp= lport
-    
-    def sport(self,sport):
-        self.sp = sport
-
-    def __str__(self) -> str:
-        return f"{self.adrr}|{self.lp}|{self.sp}"
+from flask import Flask, jsonify, redirect,request, render_template,make_response, send_file; import os,shutil,sys, socket, threading;
+import requests,redis,json; from ua_parser import user_agent_parser; from infi.systray import SysTrayIcon; from lib import *
+from waitress import serve; from paste.translogger import TransLogger; from subprocess import Popen, STARTUPINFO, STARTF_USESHOWWINDOW;
 
 #region tray ikonica
 def ugasi_program(systray):
@@ -49,42 +9,29 @@ def ugasi_program(systray):
 trag = SysTrayIcon("static/images/ikonica.ico", "Remote_dev", on_quit=ugasi_program)
 #endregion tray ikonica
 
-#region p2p
-
-def update_txt():
-    global adresar
-    pom = ""
-    for x in adresar.keys():
-        pom += f"{x}|{adresar[x]}\n"
-    with open("registar.txt", "w") as f:
-        f.write(pom)
-
-#ovaj registar.txt se mora zameniti nekom bazom podataka sa recnicima
-adresar = {}
-with open("registar.txt", "r") as f:
-    for lin in f.readlines():
-        ime, adresa,lport,sport = lin.split("|")
-        adresar[ime] = uredjaj(adresa)
-        adresar[ime].lport(lport)
-        adresar[ime].sport(sport)
-#endregion p2p
-
 #region serverske promenljive
+
+#remote_dev
 app = Flask(__name__)
 vreme_kolacic = 3600*24#s traju kolacici na sajtu
 serverski_path = os.getcwd()
 lokacija_od_pythona = f"{os.path.dirname(sys.executable)}\{os.path.basename(sys.executable)}"
 app.config['MAX_CONTENT_LENGTH'] = 100000000 #100MB mu je max upload size, mora da se namesti limit i na nginx-u
-#endregion serverske promenljive
 jeste_debug = False
 #rt = r"C:\python_projekti\remote_dev"
-rt = r'C:\Artificial_Inteligence\bata_ai'
+rt = r'C:\python_projekti\p2p_randevouz'
 nalog = ["",'Andreja', '92bffb0826ab25ce7877d6d1bd4a42f4', rt, 'rgb(171, 248, 194)']
 kljuc_korisnika = ""
 user = korisnik(nalog)
 file_pointer = ""
 
-#region stranice
+#STUN/TURN server:
+javni_ip_servera = requests.get('https://api.ipify.org').content.decode('utf8')
+r_stun = redis.Redis(host = "192.168.0.10", port = "49499", db=0)
+r_turn = redis.Redis(host = "192.168.0.10", port = "49499", db=1)
+#endregion serverske promenljive
+
+#region remote_dev
 @app.route('/', methods=['GET', 'POST'])
 def login():
     global kljuc_korisnika
@@ -195,7 +142,7 @@ def kodiranje():
     elif request.method=="GET":        
         nas,konzolica = "Remote_dev",""
 
-        #obrada monitora za trenutni file (natpis kod konzole i title stranice u html-u)
+        #obrada monitora za trenutni file (natpis kod konzole i title stranica u html-u)
         konzolica = user.trenutni_file[len(user.root_fold):]
         if not len(konzolica) == 0:
             konzolica = konzolica.split("/")[-1]            
@@ -349,31 +296,87 @@ def menadzer():
             return redirect("/coding")        
         return make_response(render_template("file_manager.html"))
 
-
-#sredi ovaj STUN server deo
-@app.route("/adresa", methods=["GET","POST"])
-def zabelezavanje():
-    global adresar
-
-    if request.method == "GET":
-        try:
-            adr = adresar[request.args["ime"]]
-        except:
-            adr = "nema"
-
-        return jsonify({"adresa": str(adr)})
-
-@app.route("/javna_adresa", methods=["GET"])
-def javna_ip():
-    global javni_ip_servera
-    return f"{javni_ip_servera}"
-        
 #error 404 handling
 @app.errorhandler(404)
 def nenadjena_stranica(e):
     return render_template("404.html"),404
 
-#endregion stranice
+#endregion remote_dev
+
+#region STUN/TURN
+@app.route("/stun", methods=["GET","POST"])
+def stun_grana():
+    global r_stun
+    if request.method == "GET":
+        user = r_stun.get(request.args["ime"])
+        if user == None:
+            '''
+            Obradi komplet ovaj case
+            Da li user postoji u bazi podataka svih korisnika?
+            Ukoliko ne salje mu da nalog ne postoji
+            '''
+            return jsonify({"odg":"nevalja"})
+        else:
+            user = json.loads(user)
+            return jsonify(user[request.args["komp"]])
+
+    if request.method == "POST":
+        return f"{javni_ip_servera}" 
+
+@app.route("/turn", methods = ["GET", "PUT"])
+def turn_grana():
+
+    '''
+    - dodaj razmenu simetricnog kljuca za specijalno sifrovanu kominukaciju izmedju dva uredjaja
+    -pristup bazi r_turnu svugde...
+    -limit za velicinu paketa koji se ostavlja u sanducetu
+    '''
+
+    if request.method == "GET":
+        '''
+        ovde druga masina uzima iz sanduceta sta joj je poslato
+        '''
+        pass
+
+    if request.method == "PUT":
+        '''
+        ovde jedna masina stavlja podatke u sanduce, za drugu
+        '''
+        pass
+
+    return "TURN GRANA: WORK IN PROGRESS"
+
+def udp_stun_grana():
+    global r_stun
+    kalup ={}
+    socke = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    socke.bind(("192.168.0.10", 3478))
+    while True:
+        poruka, lokacija = socke.recvfrom(2048)
+        '''
+        Formatiranje poruke:
+        hash_korisnik_token|ime_uredjaja|komanda|listen/sender_port tip
+        '''
+        param = poruka.decode().split("|")
+
+        user = r_stun.get(param[0])
+        if user == None:            
+            kalup= {
+                param[1]: { "ip": lokacija[0]   }                
+            }
+            kalup[param[1]][param[3]] = lokacija[1]
+            r_stun.set(param[0], json.dumps(kalup))    
+        else:
+            user = json.loads(user)
+            user[param[1]][param[3]] = lokacija[1]
+            r_stun.set(param[0], json.dumps(user))
+
+
+nit = threading.Thread(target=udp_stun_grana, daemon=True)
+nit.start()
+
+#endregion STUN/TURN
+
 if __name__=="__main__":
     if jeste_debug:     
         app.run(port = 5000)

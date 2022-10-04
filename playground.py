@@ -1,19 +1,12 @@
-from subprocess import run, Popen
-import os
-from time import sleep
-from lib import procitaj_file
+import json
 
-kljuc_korisnika = "text_file"
-serverski_path = os.getcwd()
+kalup= {
+    "d": { "ip": "65464654654"   }                
+}
 
-with open(f'{serverski_path}/{kljuc_korisnika}.txt', 'w+') as f:
-    proces = Popen("ipconfig /all", stdout=f,stderr=f, shell= True, text= True)
+f = json.dumps(kalup)
+print(f"alkdjaklsdjas\n{f}\n")
 
+x = json.loads(f)
 
-while(True):
-    konzola = procitaj_file(f'{serverski_path}/{kljuc_korisnika}.txt')
-    print(konzola)   
-    if proces.poll() == 0:
-        #os.remove(f"{serverski_path}/{kljuc_korisnika}.txt")                                            
-        break         
-    sleep(1)
+print(x["d"])
